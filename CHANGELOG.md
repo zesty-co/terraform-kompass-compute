@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.1](https://github.com/zesty-co/terraform-kompass-compute/compare/v1.0.0...v1.0.1) (2025-06-25)
+
+
+### Bug Fixes
+
+* Improve Helm chart registries ([#6](https://github.com/zesty-co/terraform-kompass-compute/issues/6)) ([231565e](https://github.com/zesty-co/terraform-kompass-compute/commit/231565eebbbe77269ebe4f9695b5daea0ccc95ae))
+
 ## 1.0.0 (2025-06-25)
 
 
