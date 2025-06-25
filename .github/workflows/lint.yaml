@@ -22,10 +22,12 @@ jobs:
 
       - name: Install terraform-docs
         run: |
+          mkdir -p terraform-docs-extract
           curl -Lo ./terraform-docs.tar.gz https://github.com/terraform-docs/terraform-docs/releases/download/v${VERSION}/terraform-docs-v${VERSION}-$(uname)-amd64.tar.gz
-          tar -xzf terraform-docs.tar.gz
-          chmod +x terraform-docs
-          mv terraform-docs /usr/local/bin/terraform-docs
+          tar -xzf terraform-docs.tar.gz -C terraform-docs-extract
+          sudo mv terraform-docs-extract/terraform-docs /usr/local/bin/terraform-docs
+          rm -rf terraform-docs-extract
+          rm -f terraform-docs.tar.gz
         env:
           VERSION: 0.20.0
 
