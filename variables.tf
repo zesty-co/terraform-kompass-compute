@@ -602,7 +602,7 @@ variable "vpc_id" {
 
   validation {
     condition     = !var.create || !var.create_s3_vpc_endpoint || var.vpc_id != null
-    error_message = "`vpc_id` must be provided when `create` is true and `create_s3_vpc_endpoints` is true."
+    error_message = "`vpc_id` must be provided when `create` is true and `create_s3_vpc_endpoint` is true."
   }
 }
 
@@ -640,7 +640,7 @@ variable "vpc_endpoint_ip_address_type" {
 
   validation {
     condition     = !var.create || !var.create_s3_vpc_endpoint || contains(["ipv4", "dualstack", "ipv6"], var.vpc_endpoint_ip_address_type)
-    error_message = "`ip_address_type` must be either 'ipv4', 'dualstack', or 'ipv6' when `create` is true and `create_s3_vpc_endpoints` is true."
+    error_message = "`ip_address_type` must be either 'ipv4', 'dualstack', or 'ipv6' when `create` is true and `create_s3_vpc_endpoint` is true."
   }
 }
 
