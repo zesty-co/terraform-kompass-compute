@@ -1,0 +1,41 @@
+name: Lint
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      - name: Setup TFLint
+        uses: terraform-linters/setup-tflint@v4
+
+      - name: Install terraform-docs
+        run: |
+          mkdir -p terraform-docs-extract
+          curl -Lo ./terraform-docs.tar.gz https://github.com/terraform-docs/terraform-docs/releases/download/v${VERSION}/terraform-docs-v${VERSION}-$(uname)-amd64.tar.gz
+          tar -xzf terraform-docs.tar.gz -C terraform-docs-extract
+          sudo mv terraform-docs-extract/terraform-docs /usr/local/bin/terraform-docs
+          rm -rf terraform-docs-extract
+          rm -f terraform-docs.tar.gz
+        env:
+          VERSION: 0.20.0
+
+      - name: run all checks
+        run: |
+          make all
+
+      - name: check for changes
+        run: |
+          git diff --exit-code || (echo "There are changes in the repository. Please commit them." && exit 1)
+          echo "No changes detected."
