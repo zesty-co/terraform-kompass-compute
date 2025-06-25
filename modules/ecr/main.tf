@@ -12,7 +12,7 @@
  *
  * ```hcl
  * module "ecr_pull_through_cache" {
- *   source = "git@github.com:TODO?TODO.git//modules/ecr"
+ *   source = "git@github.com:zesty-co/terraform-kompass-compute.git//modules/ecr"
  *
  *   # Basic configuration with default public registries
  *   # By default, creates rules for dockerhub, ghcr, kubernetes-registry, etc.
@@ -67,7 +67,7 @@
  *
  * ```hcl
  * resource "helm_release" "kompass_compute" {
- *   repository = "https://TODO/TODO"
+ *   repository = "https://zesty-co.github.io/kompass-compute"
  *   chart      = "kompass-compute"
  *   name       = "kompass-compute"
  *   namespace  = "zesty-system"
