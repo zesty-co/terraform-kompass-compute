@@ -232,7 +232,7 @@ variable "namespace" {
 variable "service_account_name" {
   description = "Service account to associate with the Kompass Compute Pod Identity"
   type        = string
-  default     = "" # TODO: To change
+  default     = ""
   nullable    = false
 
   validation {

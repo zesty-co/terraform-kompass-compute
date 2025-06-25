@@ -30,7 +30,7 @@ Check the [All in One example](examples/all-in-one) for a complete setup.
 ```hcl
 # Creates ECR pull-through cache rules and manages authentication credentials in AWS Secrets Manager.
 module "ecr" {
-  source = "git@github.com:TODO?TODO.git//modules/ecr"
+  source = "git@github.com:zesty-co/terraform-kompass-compute.git//modules/ecr"
 
   ecr_pull_through_rule_name_prefix = "cluster-name-"
 
@@ -46,7 +46,7 @@ module "ecr" {
 
 # Creates IAM roles and policies, SQS queues, and other resources for Kompass Compute.
 module "kompass_compute" {
-  source = "git@github.com:TODO?TODO.git//"
+  source = "git@github.com:zesty-co/terraform-kompass-compute.git//"
 
   cluster_name = "cluster-name"
   vpc_id       = "vpc-12345678"
@@ -62,7 +62,7 @@ module "kompass_compute" {
 
 # Deploys the Kompass Compute Helm chart to the EKS cluster.
 resource "helm_release" "kompass_compute" {
-  repository = "https://TODO/TODO"
+  repository = "https://zesty-co.github.io/kompass-compute"
   chart      = "kompass-compute"
   name       = "kompass-compute"
   namespace  = "zesty-system"
@@ -91,7 +91,7 @@ To deploy the ECR pull-through cache rules, use the `ecr` module:
 ```hcl
 # Creates ECR pull-through cache rules and manages authentication credentials in AWS Secrets Manager.
 module "ecr" {
-  source = "git@github.com:TODO?TODO.git//modules/ecr"
+  source = "git@github.com:zesty-co/terraform-kompass-compute.git//modules/ecr"
 
   registries = {
     "dockerhub" = {
@@ -109,7 +109,7 @@ After that, you can deploy the Kompass Compute per cluster using the this module
 ```hcl
 # Creates IAM roles and policies, SQS queues, and other resources for Kompass Compute.
 module "kompass_compute" {
-  source = "git@github.com:TODO?TODO.git//
+  source = "git@github.com:zesty-co/terraform-kompass-compute.git//
 
   cluster_name = "cluster-name"
   vpc_id       = "vpc-12345678"
@@ -147,7 +147,7 @@ To disable the creation of the ECR Pull-Through Cache Rule, set the `create` var
 
 ```hcl
 module "ecr" {
-  source = "git@github.com:TODO?TODO.git//modules/ecr"
+  source = "git@github.com:zesty-co/terraform-kompass-compute.git//modules/ecr"
 
   registries = {
     "dockerhub" = {
@@ -168,7 +168,7 @@ You can use it in your Helm chart as follows:
 
 ```hcl
 resource "helm_release" "kompass_compute" {
-  repository = "https://TODO/TODO"
+  repository = "https://zesty-co.github.io/kompass-compute"
   chart      = "kompass-compute"
   name       = "kompass-compute"
   namespace  = "zesty-system"
@@ -223,7 +223,7 @@ Optionally, you can disable EKS Pod Identity by setting `enable_pod_identity` to
 
 ```hcl
 module "kompass_compute" {
-  source = "git@github.com:TODO?TODO.git//"
+  source = "git@github.com:zesty-co/terraform-kompass-compute.git//"
 
   cluster_name = "cluster-name"
   vpc_id       = "vpc-12345678"
@@ -252,7 +252,7 @@ set the `create_s3_vpc_endpoint` variable to `false`:
 
 ```hcl
 module "kompass_compute" {
-  source = "git@github.com:TODO?TODO.git//"
+  source = "git@github.com:zesty-co/terraform-kompass-compute.git//"
 
   cluster_name           = "cluster-name"
   create_s3_vpc_endpoint = false

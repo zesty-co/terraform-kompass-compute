@@ -30,7 +30,7 @@
  * ```hcl
  * # Creates ECR pull-through cache rules and manages authentication credentials in AWS Secrets Manager.
  * module "ecr" {
- *   source = "git@github.com:TODO?TODO.git//modules/ecr"
+ *   source = "git@github.com:zesty-co/terraform-kompass-compute.git//modules/ecr"
  *
  *   ecr_pull_through_rule_name_prefix = "cluster-name-"
  *
@@ -46,7 +46,7 @@
  *
  * # Creates IAM roles and policies, SQS queues, and other resources for Kompass Compute.
  * module "kompass_compute" {
- *   source = "git@github.com:TODO?TODO.git//"
+ *   source = "git@github.com:zesty-co/terraform-kompass-compute.git//"
  *
  *   cluster_name = "cluster-name"
  *   vpc_id       = "vpc-12345678"
@@ -62,7 +62,7 @@
  *
  * # Deploys the Kompass Compute Helm chart to the EKS cluster.
  * resource "helm_release" "kompass_compute" {
- *   repository = "https://TODO/TODO"
+ *   repository = "https://zesty-co.github.io/kompass-compute"
  *   chart      = "kompass-compute"
  *   name       = "kompass-compute"
  *   namespace  = "zesty-system"
@@ -91,7 +91,7 @@
  * ```hcl
  * # Creates ECR pull-through cache rules and manages authentication credentials in AWS Secrets Manager.
  * module "ecr" {
- *   source = "git@github.com:TODO?TODO.git//modules/ecr"
+ *   source = "git@github.com:zesty-co/terraform-kompass-compute.git//modules/ecr"
  *
  *   registries = {
  *     "dockerhub" = {
@@ -109,7 +109,7 @@
  * ```hcl
  * # Creates IAM roles and policies, SQS queues, and other resources for Kompass Compute.
  * module "kompass_compute" {
- *   source = "git@github.com:TODO?TODO.git//
+ *   source = "git@github.com:zesty-co/terraform-kompass-compute.git//
  *
  *   cluster_name = "cluster-name"
  *   vpc_id       = "vpc-12345678"
@@ -147,7 +147,7 @@
  *
  * ```hcl
  * module "ecr" {
- *   source = "git@github.com:TODO?TODO.git//modules/ecr"
+ *   source = "git@github.com:zesty-co/terraform-kompass-compute.git//modules/ecr"
  *
  *   registries = {
  *     "dockerhub" = {
@@ -168,7 +168,7 @@
  *
  * ```hcl
  * resource "helm_release" "kompass_compute" {
- *   repository = "https://TODO/TODO"
+ *   repository = "https://zesty-co.github.io/kompass-compute"
  *   chart      = "kompass-compute"
  *   name       = "kompass-compute"
  *   namespace  = "zesty-system"
@@ -223,7 +223,7 @@
  *
  * ```hcl
  * module "kompass_compute" {
- *   source = "git@github.com:TODO?TODO.git//"
+ *   source = "git@github.com:zesty-co/terraform-kompass-compute.git//"
  *
  *   cluster_name = "cluster-name"
  *   vpc_id       = "vpc-12345678"
@@ -252,7 +252,7 @@
  *
  * ```hcl
  * module "kompass_compute" {
- *   source = "git@github.com:TODO?TODO.git//"
+ *   source = "git@github.com:zesty-co/terraform-kompass-compute.git//"
  *
  *   cluster_name           = "cluster-name"
  *   create_s3_vpc_endpoint = false
