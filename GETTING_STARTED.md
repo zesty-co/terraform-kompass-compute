@@ -51,7 +51,7 @@ provider "helm" {
 
 # Creates ECR pull-through cache rules for Docker Hub, GitHub Container Registry, etc.
 module "ecr" {
-  source = "git@github.com:zesty-co/terraform-kompass-compute.git//modules/ecr"
+  source = "github.com/zesty-co/terraform-kompass-compute//modules/ecr"
 
   ecr_pull_through_rule_name_prefix = "${var.cluster_name}-"
 
@@ -67,7 +67,7 @@ module "ecr" {
 
 # Creates IAM roles and policies, SQS queues, and other resources for Kompass Compute
 module "kompass_compute" {
-  source = "git@github.com:zesty-co/terraform-kompass-compute.git//"
+  source = "github.com/zesty-co/terraform-kompass-compute"
 
   cluster_name = var.cluster_name
   vpc_id       = var.vpc_id
@@ -178,7 +178,7 @@ provider "aws" {}
 
 # Creates ECR pull-through cache rules for Docker Hub, GitHub Container Registry, etc.
 module "ecr" {
-  source = "git@github.com:zesty-co/terraform-kompass-compute.git//modules/ecr"
+  source = "github.com/zesty-co/terraform-kompass-compute//modules/ecr"
 
   registries = {
     "dockerhub" = {
