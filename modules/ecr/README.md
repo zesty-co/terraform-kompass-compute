@@ -12,7 +12,7 @@ This Terraform module creates and manages AWS ECR Pull-Through Cache Rules and t
 
 ```hcl
 module "ecr_pull_through_cache" {
-  source = "git@github.com:zesty-co/terraform-kompass-compute.git//modules/ecr"
+  source = "github.com/zesty-co/terraform-kompass-compute//modules/ecr"
 
   # Basic configuration with default public registries
   # By default, creates rules for dockerhub, ghcr, kubernetes-registry, etc.
