@@ -37,4 +37,3 @@ jobs:
         run: |
           git diff --exit-code || (echo "There are changes in the repository. Please commit them." && exit 1)
           echo "No changes detected."
-        continue-on-error: true
