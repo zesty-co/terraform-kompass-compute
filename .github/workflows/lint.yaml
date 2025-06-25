@@ -2,12 +2,7 @@ name: Lint
 
 on:
   push:
-    branches:
-      - main
-      - 'feature/**'
   pull_request:
-    branches:
-      - main
 
 jobs:
   terraform:
