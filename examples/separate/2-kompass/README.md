@@ -96,6 +96,8 @@ provider "helm" {
 
 | Name | Description |
 |------|-------------|
+| <a name="output_kompass_compute_helm_values"></a> [kompass\_compute\_helm\_values](#output\_kompass\_compute\_helm\_values) | n/a |
+| <a name="output_kompass_compute_helm_values_yaml"></a> [kompass\_compute\_helm\_values\_yaml](#output\_kompass\_compute\_helm\_values\_yaml) | n/a |
 | <a name="output_kompass_compute_hiberscaler_service_account_name"></a> [kompass\_compute\_hiberscaler\_service\_account\_name](#output\_kompass\_compute\_hiberscaler\_service\_account\_name) | Kompass Compute Module: Service Account for Hiberscaler Pod Identity. |
 | <a name="output_kompass_compute_iam_hiberscaler_policy_arn"></a> [kompass\_compute\_iam\_hiberscaler\_policy\_arn](#output\_kompass\_compute\_iam\_hiberscaler\_policy\_arn) | Kompass Compute Module: The ARN of the Hiberscaler controller IAM policy. |
 | <a name="output_kompass_compute_iam_hiberscaler_policy_id"></a> [kompass\_compute\_iam\_hiberscaler\_policy\_id](#output\_kompass\_compute\_iam\_hiberscaler\_policy\_id) | Kompass Compute Module: The Policy ID of the Hiberscaler controller IAM policy. |
