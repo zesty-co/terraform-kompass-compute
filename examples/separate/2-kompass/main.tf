@@ -97,9 +97,10 @@ module "kompass_compute" {
 
 # Deploys the Kompass Compute Helm chart to the EKS cluster.
 resource "helm_release" "kompass_compute" {
-  chart     = "../../../../charts/kompass-compute"
-  name      = "kompass-compute"
-  namespace = "zesty-system"
+  repository = "https://zesty-co.github.io/kompass-compute"
+  chart      = "kompass-compute"
+  name       = "kompass-compute"
+  namespace  = "zesty-system"
 
   # Get values from the ECR module, Kompass Compute module, and user-defined values
   values = [
