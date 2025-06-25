@@ -58,7 +58,7 @@ data "aws_iam_policy_document" "hiberscaler" {
 
   # Autodiscovery
   statement {
-    sid = "AllowEC2Describre"
+    sid = "AllowEC2Describe"
     resources = [
       "*",
     ]
@@ -176,7 +176,7 @@ data "aws_iam_policy_document" "snapshooter" {
   count = local.use_snapshooter_policy ? 1 : 0
 
   statement {
-    sid = "AllowEC2Describre"
+    sid = "AllowEC2Describe"
     resources = [
       "*",
     ]

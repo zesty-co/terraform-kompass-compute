@@ -85,7 +85,7 @@ output "iam_hiberscaler_policy_name" {
 
 output "iam_hiberscaler_policy_arn" {
   description = "The Amazon Resource Name (ARN) specifying the Hiberscaler controller IAM policy"
-  value       = module.iam_hiberscaler.iam_role_arn
+  value       = module.iam_hiberscaler.iam_policy_arn
 }
 
 output "iam_hiberscaler_policy_policy_id" {
