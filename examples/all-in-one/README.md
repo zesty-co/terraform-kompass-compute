@@ -138,6 +138,8 @@ provider "helm" {
 | <a name="output_ecr_secret_version_arns"></a> [ecr\_secret\_version\_arns](#output\_ecr\_secret\_version\_arns) | ECR Module: Map of created ECR pull through cache secret version ARNs. |
 | <a name="output_ecr_secret_version_ids"></a> [ecr\_secret\_version\_ids](#output\_ecr\_secret\_version\_ids) | ECR Module: Map of created ECR pull through cache secret version IDs. |
 | <a name="output_ecr_secrets"></a> [ecr\_secrets](#output\_ecr\_secrets) | ECR Module: Map of created ECR pull through cache secrets. |
+| <a name="output_kompass_compute_helm_values"></a> [kompass\_compute\_helm\_values](#output\_kompass\_compute\_helm\_values) | n/a |
+| <a name="output_kompass_compute_helm_values_yaml"></a> [kompass\_compute\_helm\_values\_yaml](#output\_kompass\_compute\_helm\_values\_yaml) | n/a |
 | <a name="output_kompass_compute_hiberscaler_service_account_name"></a> [kompass\_compute\_hiberscaler\_service\_account\_name](#output\_kompass\_compute\_hiberscaler\_service\_account\_name) | Kompass Compute Module: Service Account for Hiberscaler Pod Identity. |
 | <a name="output_kompass_compute_iam_hiberscaler_policy_arn"></a> [kompass\_compute\_iam\_hiberscaler\_policy\_arn](#output\_kompass\_compute\_iam\_hiberscaler\_policy\_arn) | Kompass Compute Module: The ARN of the Hiberscaler controller IAM policy. |
 | <a name="output_kompass_compute_iam_hiberscaler_policy_id"></a> [kompass\_compute\_iam\_hiberscaler\_policy\_id](#output\_kompass\_compute\_iam\_hiberscaler\_policy\_id) | Kompass Compute Module: The Policy ID of the Hiberscaler controller IAM policy. |
