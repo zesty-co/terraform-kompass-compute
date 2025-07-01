@@ -184,3 +184,15 @@ output "kompass_compute_image_size_calculator_service_account_name" {
   description = "Kompass Compute Module: Service Account for Image Size Calculator Pod Identity."
   value       = module.kompass_compute.image_size_calculator_service_account_name
 }
+
+################################################################################
+# Kompass Compute Module Helm Values
+################################################################################
+
+output "kompass_compute_helm_values" {
+  value = module.kompass_compute.helm_values
+}
+
+output "kompass_compute_helm_values_yaml" {
+  value = module.kompass_compute.helm_values_yaml
+}
