@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.2](https://github.com/zesty-co/terraform-kompass-compute/compare/v1.0.1...v1.0.2) (2025-07-08)
+
+
+### Bug Fixes
+
+* Add missing ECR permissions ([#10](https://github.com/zesty-co/terraform-kompass-compute/issues/10)) ([47cfa7b](https://github.com/zesty-co/terraform-kompass-compute/commit/47cfa7b4828d65ec0053f7f466f995843fe10e91))
+
 ## [1.0.1](https://github.com/zesty-co/terraform-kompass-compute/compare/v1.0.0...v1.0.1) (2025-06-25)
 
 
