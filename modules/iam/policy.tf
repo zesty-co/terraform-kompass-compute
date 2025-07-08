@@ -44,7 +44,7 @@ data "aws_iam_policy_document" "hiberscaler" {
   }
 
   statement {
-    sid = "AllowManageECRPullThroughCache"
+    sid = "AllowECRPullThroughCacheRepositoryCreation"
 
     resources = [
       "arn:${local.partition}:ecr:${local.region}:${local.account_id}:repository/*",
@@ -271,7 +271,7 @@ data "aws_iam_policy_document" "image_size_calculator" {
   }
 
   statement {
-    sid = "AllowManageECRPullThroughCache"
+    sid = "AllowECRPullThroughCacheRepositoryCreation"
 
     resources = [
       "arn:${local.partition}:ecr:${local.region}:${local.account_id}:repository/*",
