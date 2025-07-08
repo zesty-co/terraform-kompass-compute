@@ -44,6 +44,18 @@ data "aws_iam_policy_document" "hiberscaler" {
   }
 
   statement {
+    sid = "AllowManageECRPullThroughCache"
+
+    resources = [
+      "arn:${local.partition}:ecr:${local.region}:${local.account_id}:repository/*",
+    ]
+
+    actions = [
+      "ecr:CreateRepository",
+    ]
+  }
+
+  statement {
     sid = "AllowReadingFromInterruptionQueue"
     resources = [
       "arn:${local.partition}:sqs:${local.region}:${local.account_id}:${var.sqs_queue_name}",
