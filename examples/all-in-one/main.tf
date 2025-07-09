@@ -5,7 +5,7 @@
  * using Terraform. It includes the creation of ECR pull-through cache rules, IAM roles, SQS queues,
  * and the deployment of the Kompass Compute Helm chart.
  *
- * Note: It is highly recommended to deploy `ecr` module only once per region.
+ * Note: It is recommended to deploy `ecr` module only once per region.
  * ECR pull-through cache rules are regional resources, and creating them multiple times
  * is not necessary and may lead to conflicts.
  *
@@ -14,7 +14,7 @@
  * - Docker and GitHub Container Registry credentials stored in AWS Secrets Manager
  * - An existing EKS cluster
  * - A VPC with subnets
- * - Zesty Kompass Infra installed in the EKS cluster
+ * - Zesty Kompass Insight installed in the EKS cluster
  *
  * ## Configuration
  *
