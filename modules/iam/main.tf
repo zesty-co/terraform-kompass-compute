@@ -3,6 +3,8 @@
  *
  * This Terraform module creates and manages IAM roles and policies for the Zesty Kompass Compute controller.
  *
+ * Note: This module should not be used directly, but rather as a sub-module of the `zesty-co/compute/kompass` module.
+ *
  * ## Features
  *
  * - Creates and manages IAM roles for multiple Kompass Compute controllers:
@@ -17,7 +19,8 @@
  *
  * ```hcl
  * module "iam_controller" {
- *   source = "path/to/module"
+ *   source  = "zesty-co/compute/kompass//modules/iam"
+ *   version = "~> 1.0.0"
  *
  *   create = true
  *
@@ -30,7 +33,7 @@
  *
  *   # Enable Pod Identity or IRSA as needed
  *   enable_pod_identity = true
- *   enable_irsa         = true
+ *   enable_irsa         = false
  *
  *   # Optional: Custom tags
  *   tags = {

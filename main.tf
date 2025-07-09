@@ -71,7 +71,7 @@
  *
  * ### All in One
  *
- * Note: It is highly recommended to deploy `ecr` module only once per region.
+ * Note: It is recommended to deploy `ecr` module only once per region.
  * ECR pull-through cache rules are regional resources, and creating them multiple times
  * is not necessary and may lead to conflicts.
  *
@@ -80,7 +80,8 @@
  * ```hcl
  * # Creates ECR pull-through cache rules and manages authentication credentials in AWS Secrets Manager.
  * module "ecr" {
- *   source = "github.com/zesty-co/terraform-kompass-compute//modules/ecr"
+ *   source  = "zesty-co/compute/kompass//modules/ecr"
+ *   version = "~> 1.0.0"
  *
  *   ecr_pull_through_rule_name_prefix = "cluster-name-"
  *
@@ -96,7 +97,8 @@
  *
  * # Creates IAM roles and policies, SQS queues, and other resources for Kompass Compute.
  * module "kompass_compute" {
- *   source = "github.com/zesty-co/terraform-kompass-compute"
+ *   source  = "zesty-co/compute/kompass"
+ *   version = "~> 1.0.0"
  *
  *   cluster_name = "cluster-name"
  *   vpc_id       = "vpc-12345678"
@@ -141,7 +143,8 @@
  * ```hcl
  * # Creates ECR pull-through cache rules and manages authentication credentials in AWS Secrets Manager.
  * module "ecr" {
- *   source = "github.com/zesty-co/terraform-kompass-compute//modules/ecr"
+ *   source  = "zesty-co/compute/kompass//modules/ecr"
+ *   version = "~> 1.0.0"
  *
  *   registries = {
  *     "dockerhub" = {
@@ -154,12 +157,13 @@
  * }
  * ```
  *
- * After that, you can deploy the Kompass Compute per cluster using the this module:
+ * After that, you can deploy the Kompass Compute per cluster using this module:
  *
  * ```hcl
  * # Creates IAM roles and policies, SQS queues, and other resources for Kompass Compute.
  * module "kompass_compute" {
- *   source = "git@github.com:zesty-co/terraform-kompass-compute.git//
+ *   source  = "zesty-co/compute/kompass"
+ *   version = "~> 1.0.0"
  *
  *   cluster_name = "cluster-name"
  *   vpc_id       = "vpc-12345678"
@@ -185,10 +189,10 @@
  * Format of the `secret_content` or secret in AWS Secrets Manager should be a JSON string containing the `username` and `accessToken` fields:
  *
  * ```json
- *   {
- *     "username": "your-username",
- *     "accessToken": "your-access-token"
- *   }
+ * {
+ *   "username": "your-username",
+ *   "accessToken": "your-access-token"
+ * }
  * ```
  *
  * ## Disable ECR Pull-Through Cache Rule creation
@@ -197,7 +201,8 @@
  *
  * ```hcl
  * module "ecr" {
- *   source = "github.com/zesty-co/terraform-kompass-compute//modules/ecr"
+ *   source  = "zesty-co/compute/kompass//modules/ecr"
+ *   version = "~> 1.0.0"
  *
  *   registries = {
  *     "dockerhub" = {
@@ -273,7 +278,8 @@
  *
  * ```hcl
  * module "kompass_compute" {
- *   source = "github.com/zesty-co/terraform-kompass-compute"
+ *   source  = "zesty-co/compute/kompass"
+ *   version = "~> 1.0.0"
  *
  *   cluster_name = "cluster-name"
  *   vpc_id       = "vpc-12345678"
@@ -302,12 +308,21 @@
  *
  * ```hcl
  * module "kompass_compute" {
- *   source = "github.com/zesty-co/terraform-kompass-compute"
+ *   source  = "zesty-co/compute/kompass"
+ *   version = "~> 1.0.0"
  *
  *   cluster_name           = "cluster-name"
  *   create_s3_vpc_endpoint = false
  * }
  * ```
+ *
+ *
+ * ## Upgrade
+ *
+ * To upgrade the Terraform modules, update the `version` attributes in your module blocks to the desired release.
+ * Run `terraform init -upgrade` to fetch the latest versions, then `terraform plan` and `terraform apply` to apply changes.
+ *
+ * To upgrade the Helm chart, update the `version` attribute your `helm_release` resource. Run `terraform apply` to deploy the new chart version.
  *
  */
 

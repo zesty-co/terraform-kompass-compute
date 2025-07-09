@@ -3,6 +3,10 @@
  *
  * This Terraform module creates and manages AWS ECR Pull-Through Cache Rules and their associated secrets in AWS Secrets Manager.
  *
+ * Note: It is recommended to deploy this module only once per region.
+ * ECR pull-through cache rules are regional resources, and creating them multiple times
+ * is not necessary and may lead to conflicts.
+ *
  * ## Features
  *
  * - Creates ECR Pull-Through Cache Rules for various registries
@@ -11,8 +15,9 @@
  * ## Usage
  *
  * ```hcl
- * module "ecr_pull_through_cache" {
- *   source = "github.com/zesty-co/terraform-kompass-compute//modules/ecr"
+ * module "ecr" {
+ *   source  = "zesty-co/compute/kompass//modules/ecr"
+ *   version = "~> 1.0.0"
  *
  *   # Basic configuration with default public registries
  *   # By default, creates rules for dockerhub, ghcr, kubernetes-registry, etc.
@@ -41,10 +46,10 @@
  * Format of the `secret_content` or secret in AWS Secrets Manager should be a JSON string containing the `username` and `accessToken` fields:
  *
  * ```json
- *   {
- *     "username": "your-username",
- *     "accessToken": "your-access-token"
- *   }
+ * {
+ *   "username": "your-username",
+ *   "accessToken": "your-access-token"
+ * }
  * ```
  *
  * ## Disable ECR Pull-Through Cache Rule Creation
