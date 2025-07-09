@@ -78,6 +78,21 @@ is not necessary and may lead to conflicts.
 Check the [All in One example](examples/all-in-one) for a complete setup.
 
 ```hcl
+locals {
+  cluster_name = "cluster-name"
+  vpc_id       = data.aws_eks_cluster.this.vpc_config[0].vpc_id
+  vpc_cidr     = data.aws_vpc.this.cidr_block
+  subnet_ids   = data.aws_eks_cluster.this.vpc_config[0].subnet_ids
+}
+
+data "aws_eks_cluster" "this" {
+  name = local.cluster_name
+}
+
+data "aws_vpc" "this" {
+  id = data.aws_eks_cluster.this.vpc_config[0].vpc_id
+}
+
 # Creates ECR pull-through cache rules and manages authentication credentials in AWS Secrets Manager.
 module "ecr" {
   source  = "zesty-co/compute/kompass//modules/ecr"
@@ -100,14 +115,14 @@ module "kompass_compute" {
   source  = "zesty-co/compute/kompass"
   version = "~> 1.0.0"
 
-  cluster_name = "cluster-name"
-  vpc_id       = "vpc-12345678"
-  subnet_ids   = ["subnet-12345678", "subnet-87654321"]
+  cluster_name = local.cluster_name
+  vpc_id       = local.vpc_id
+  subnet_ids   = local.subnet_ids
 
   vpc_endpoint_security_group_rules = {
     ingress_https = {
       description = "HTTPS from VPC"
-      cidr_blocks = ["10.0.0.0/16"]
+      cidr_blocks = [local.vpc_cidr]
     }
   }
 }
@@ -160,19 +175,34 @@ module "ecr" {
 After that, you can deploy the Kompass Compute per cluster using this module:
 
 ```hcl
+locals {
+  cluster_name = "cluster-name"
+  vpc_id       = data.aws_eks_cluster.this.vpc_config[0].vpc_id
+  vpc_cidr     = data.aws_vpc.this.cidr_block
+  subnet_ids   = data.aws_eks_cluster.this.vpc_config[0].subnet_ids
+}
+
+data "aws_eks_cluster" "this" {
+  name = local.cluster_name
+}
+
+data "aws_vpc" "this" {
+  id = data.aws_eks_cluster.this.vpc_config[0].vpc_id
+}
+
 # Creates IAM roles and policies, SQS queues, and other resources for Kompass Compute.
 module "kompass_compute" {
   source  = "zesty-co/compute/kompass"
   version = "~> 1.0.0"
 
-  cluster_name = "cluster-name"
-  vpc_id       = "vpc-12345678"
-  subnet_ids   = ["subnet-12345678", "subnet-87654321"]
+  cluster_name = local.cluster_name
+  vpc_id       = local.vpc_id
+  subnet_ids   = local.subnet_ids
 
   vpc_endpoint_security_group_rules = {
     ingress_https = {
       description = "HTTPS from VPC"
-      cidr_blocks = ["10.0.0.0/16"]
+      cidr_blocks = [local.vpc_cidr]
     }
   }
 }

@@ -15,10 +15,10 @@ using Terraform. It requires the ECR Pull-Through Cache Rules to be created for 
 The example uses the following variables:
 
 - `cluster_name`: The name of the EKS cluster.
-- `vpc_id`: The ID of the VPC where the EKS cluster is deployed.
-- `subnet_ids`: A list of subnet IDs where S3 VPC endpoints will be created.
-- `vpc_endpoints_ingress_cidr_block`: The CIDR block for ingress traffic to the VPC endpoints.
 - `helm_values_yaml`: Additional Helm values to customize the deployment.
+
+Other parameters like, `vpc_id`, `subnet_ids`, `vpc_endpoints_ingress_cidr_block`, are discovered from the EKS cluster using data sources.
+Instead of relying on the discovered values, they can also be passed as variables.
 
 ## ECR Pull-Through Cache Rules
 
@@ -106,7 +106,9 @@ provider "helm" {
 |------|------|
 | [helm_release.kompass_compute](https://registry.terraform.io/providers/hashicorp/helm/latest/docs/resources/release) | resource |
 | [aws_caller_identity.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/caller_identity) | data source |
+| [aws_eks_cluster.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/eks_cluster) | data source |
 | [aws_region.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/region) | data source |
+| [aws_vpc.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/vpc) | data source |
 
 ## Inputs
 
@@ -114,9 +116,6 @@ provider "helm" {
 |------|-------------|------|---------|:--------:|
 | <a name="input_cluster_name"></a> [cluster\_name](#input\_cluster\_name) | Name of the EKS cluster | `string` | n/a | yes |
 | <a name="input_helm_values_yaml"></a> [helm\_values\_yaml](#input\_helm\_values\_yaml) | YAML configuration for Helm values | `string` | `"{}"` | no |
-| <a name="input_subnet_ids"></a> [subnet\_ids](#input\_subnet\_ids) | List of subnet IDs to associate with the S3 VPC Endpoint | `list(string)` | n/a | yes |
-| <a name="input_vpc_endpoints_ingress_cidr_block"></a> [vpc\_endpoints\_ingress\_cidr\_block](#input\_vpc\_endpoints\_ingress\_cidr\_block) | CIDR block for ingress rules on the VPC Endpoint security group | `string` | n/a | yes |
-| <a name="input_vpc_id"></a> [vpc\_id](#input\_vpc\_id) | ID of the VPC where the EKS cluster is deployed | `string` | n/a | yes |
 
 ## Outputs
 

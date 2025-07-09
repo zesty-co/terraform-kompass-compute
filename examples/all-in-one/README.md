@@ -21,12 +21,12 @@ is not necessary and may lead to conflicts.
 The example uses the following variables:
 
 - `cluster_name`: The name of the EKS cluster.
-- `vpc_id`: The ID of the VPC where the EKS cluster is deployed.
-- `subnet_ids`: A list of subnet IDs where S3 VPC endpoints will be created.
-- `vpc_endpoints_ingress_cidr_block`: The CIDR block for ingress traffic to the VPC endpoints.
 - `dockerhub_secret_arn`: The ARN of the AWS Secrets Manager secret for Docker Hub credentials.
 - `ghcr_secret_arn`: The ARN of the AWS Secrets Manager secret for GitHub Container Registry credentials.
 - `helm_values_yaml`: Additional Helm values to customize the deployment.
+
+Other parameters like, `vpc_id`, `subnet_ids`, `vpc_endpoints_ingress_cidr_block`, are discovered from the EKS cluster using data sources.
+Instead of relying on the discovered values, they can also be passed as variables.
 
 ## Image registry secrets
 
@@ -98,6 +98,7 @@ provider "helm" {
 
 | Name | Version |
 |------|---------|
+| <a name="provider_aws"></a> [aws](#provider\_aws) | ~> 5.0 |
 | <a name="provider_helm"></a> [helm](#provider\_helm) | >= 2.7 |
 
 ## Modules
@@ -112,6 +113,8 @@ provider "helm" {
 | Name | Type |
 |------|------|
 | [helm_release.kompass_compute](https://registry.terraform.io/providers/hashicorp/helm/latest/docs/resources/release) | resource |
+| [aws_eks_cluster.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/eks_cluster) | data source |
+| [aws_vpc.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/vpc) | data source |
 
 ## Inputs
 
@@ -121,9 +124,6 @@ provider "helm" {
 | <a name="input_dockerhub_secret_arn"></a> [dockerhub\_secret\_arn](#input\_dockerhub\_secret\_arn) | ARN of the Docker Hub secret in AWS Secrets Manager | `string` | n/a | yes |
 | <a name="input_ghcr_secret_arn"></a> [ghcr\_secret\_arn](#input\_ghcr\_secret\_arn) | ARN of the GitHub Container Registry secret in AWS Secrets Manager | `string` | n/a | yes |
 | <a name="input_helm_values_yaml"></a> [helm\_values\_yaml](#input\_helm\_values\_yaml) | YAML configuration for Helm values | `string` | `"{}"` | no |
-| <a name="input_subnet_ids"></a> [subnet\_ids](#input\_subnet\_ids) | List of subnet IDs to associate with the S3 VPC Endpoint | `list(string)` | n/a | yes |
-| <a name="input_vpc_endpoints_ingress_cidr_block"></a> [vpc\_endpoints\_ingress\_cidr\_block](#input\_vpc\_endpoints\_ingress\_cidr\_block) | CIDR block for ingress rules on the VPC Endpoint security group | `string` | n/a | yes |
-| <a name="input_vpc_id"></a> [vpc\_id](#input\_vpc\_id) | ID of the VPC where the EKS cluster is deployed | `string` | n/a | yes |
 
 ## Outputs
 
