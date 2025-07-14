@@ -21,12 +21,12 @@
  * The example uses the following variables:
  *
  * - `cluster_name`: The name of the EKS cluster.
- * - `vpc_id`: The ID of the VPC where the EKS cluster is deployed.
- * - `subnet_ids`: A list of subnet IDs where S3 VPC endpoints will be created.
- * - `vpc_endpoints_ingress_cidr_block`: The CIDR block for ingress traffic to the VPC endpoints.
  * - `dockerhub_secret_arn`: The ARN of the AWS Secrets Manager secret for Docker Hub credentials.
  * - `ghcr_secret_arn`: The ARN of the AWS Secrets Manager secret for GitHub Container Registry credentials.
  * - `helm_values_yaml`: Additional Helm values to customize the deployment.
+ *
+ * Other parameters like, `vpc_id`, `subnet_ids`, `vpc_endpoints_ingress_cidr_block`, are discovered from the EKS cluster using data sources.
+ * Instead of relying on the discovered values, they can also be passed as variables.
  *
  * ## Image registry secrets
  *
@@ -88,6 +88,20 @@
  *
  */
 
+data "aws_eks_cluster" "this" {
+  name = var.cluster_name
+}
+
+data "aws_vpc" "this" {
+  id = data.aws_eks_cluster.this.vpc_config[0].vpc_id
+}
+
+locals {
+  vpc_id     = data.aws_eks_cluster.this.vpc_config[0].vpc_id
+  vpc_cidr   = data.aws_vpc.this.cidr_block
+  subnet_ids = data.aws_eks_cluster.this.vpc_config[0].subnet_ids
+}
+
 # Creates ECR pull-through cache rules and manages authentication credentials in AWS Secrets Manager.
 module "ecr" {
   source = "../../modules/ecr"
@@ -109,13 +123,13 @@ module "kompass_compute" {
   source = "../../"
 
   cluster_name = var.cluster_name
-  vpc_id       = var.vpc_id
-  subnet_ids   = var.subnet_ids
+  vpc_id       = local.vpc_id
+  subnet_ids   = local.subnet_ids
 
   vpc_endpoint_security_group_rules = {
     ingress_https = {
       description = "HTTPS from VPC"
-      cidr_blocks = [var.vpc_endpoints_ingress_cidr_block]
+      cidr_blocks = [local.vpc_cidr]
     }
   }
 }
