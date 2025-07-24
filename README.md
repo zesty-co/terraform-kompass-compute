@@ -7,25 +7,25 @@ It creates IAM roles, policies, SQS queues, and related resources for the Kompas
 
 ## Prerequisites
 
-*   Kubernetes 1.19+
-*   Helm 3.2.0+
-*   Kompass Insight Agent installed in the cluster
-*   kompass-compute [terraform module](https://github.com/zesty-co/terraform-kompass-compute) installed
-*   Pod Identity enabled in the cluster, otherwise go to the [IRSA section](#using-iam-roles-for-service-accounts-irsa)
+* Kubernetes 1.19+
+* Helm 3.2.0+
+* Kompass Insight Agent installed in the cluster
+* kompass-compute [terraform module](https://github.com/zesty-co/terraform-kompass-compute) installed
+* Pod Identity enabled in the cluster, otherwise go to the [IRSA section](#using-iam-roles-for-service-accounts-irsa)
 
 ## Quick Start
 
 The simplest way to install involves creating a Terraform configuration with the following components:
 
-1. A provider section that allows the module:
-   1. AWS provider - Get cluster information
-   2. Helm provider - Deploy the Kompass Compute Helm chart
+1. A provider section that help with the following things:
+   1. AWS provider - Get cluster information.
+   2. Helm provider - Deploy the Kompass Compute Helm chart.
 2. Invocation of the kompass-compute module that install all required AWS resources.
 3. Invocation of the helm_release resource to deploy the Kompass Compute Helm chart.
-    - The output of the kompass-compute module includes a values.yaml that give the kompass-compute helm chart knowledge about the location of the deployed cloud resources.
+    * The output of the kompass-compute module includes a values.yaml that gives the kompass-compute helm chart knowledge about the location of the deployed cloud resources.\
     The configuration below performs the plumbing.
 
-Below is a sample configuration for connecting your terraform with your Cloud and Kubernetes resources.
+Below is a sample configuration for configuring the necasarry providers, that help perform the later steps.
 
 If your setup is different, you will need to adjust the configuration accordingly.
 
@@ -107,19 +107,19 @@ resource "helm_release" "kompass_compute" {
 }
 ```
 
-## Features
+## Deployed Resources
 
-- Creates IAM roles for various components of the Kompass Compute controller:
-  - Hiberscaler
-  - Image Size Calculator
-  - Snapshooter
-  - Telemetry Manager
+* Creates IAM roles for various components of the Kompass Compute controller:
+  * Hiberscaler
+  * Image Size Calculator
+  * Snapshooter
+  * Telemetry Manager
 
-- Configures SQS queue for spot instance termination notifications
-- Sets up CloudWatch event rules for spot instance interruptions
-- Creates S3 VPC endpoint for secure access to S3
-- Configures security groups for VPC endpoints
-- Supports both EKS Pod Identity and IRSA (IAM Roles for Service Accounts)
+* SQS queue for spot instance termination notifications
+* CloudWatch event rules for spot instance interruptions
+* S3 VPC endpoint for secure access to S3
+* Security groups for VPC endpoints
+* EKS Pod Identity or IRSA (IAM Roles for Service Accounts) resources configs.
 
 ## Provider Configuration
 
@@ -188,23 +188,26 @@ module "ecr" {
 
   ecr_pull_through_rule_name_prefix = "<Cluster Name>-"
 
-  registries = {
-    "dockerhub" = {
-      secret_arn = "<Dockerhub Secret ARN>"
-      # secret_content = ... # If you want to create a secret out of credentials, instead of using an existing secret
-    },
-    "ghcr" = {
-      secret_arn = "<GitHub Container Registry Secret ARN>"
-      # secret_content = ... # If you want to create a secret out of credentials, instead of using an existing secret
-    }
-  }
+  # By default the ecr module creates an ECR pull through cache rule for each of the supported registries.
+  # If you want to disable the creation of the ECR pull through cache rule for a specific registry, set the `create` variable to `false`.
+  # If you want to specify credentials for a specific registry to access private images or avoid rate limits, set the `secret_arn` variable to the ARN of the secret, or `secret_content` to the content of the secret.
+
+  # registries = {
+  #   "dockerhub" = {
+  #     create = false
+  #     secret_arn = "<Dockerhub Secret ARN>"
+  #     # secret_content = ... # If you want to create a secret out of credentials, instead of using an existing secret
+  #   },
+  #   "ghcr" = {
+  #     secret_arn = "<GitHub Container Registry Secret ARN>"
+  #     # secret_content = ... # If you want to create a secret out of credentials, instead of using an existing secret
+  #   }
+  # }
 }
 ```
 
 > Note: It is recommended to deploy `ecr` module only once per region.
 ECR pull-through cache rules are regional resources, and creating them multiple times is not necessary and may lead to conflicts.
-
-
 
 To connect the helm chart to the provided ECR repository, you need to provide the values.yaml file to the helm chart as follows:
 
@@ -222,44 +225,11 @@ resource "helm_release" "kompass_compute" {
 }
 ```
 
-## ECR Pull-Through Cache secrets
-
-The `ecr` module can use existing secrets or create new ones in AWS Secrets Manager for the ECR Pull-Through Cache Rules.
-You can specify the secrets using either `secret_arn` or `secret_content`.
-
-Format of the `secret_content` or secret in AWS Secrets Manager should be a JSON string containing the `username` and `accessToken` fields:
-
-```json
-{
-  "username": "your-username",
-  "accessToken": "your-access-token"
-}
-```
-
-## Disable ECR Pull-Through Cache Rule creation
-
-To disable the creation of the ECR Pull-Through Cache Rule, set the `create` variable to `false`:
-
-```hcl
-module "ecr" {
-  source  = "zesty-co/compute/kompass//modules/ecr"
-  version = "~> 1.0.0"
-
-  registries = {
-    "dockerhub" = {
-      create = false
-    },
-    "ghcr" = {
-      create = false
-    }
-  }
-}
-```
-
 ## Passing values to Helm Chart
 
 The `kompass_compute` module and the `ecr` module output a `helm_values_yaml` variable that can be used to pass values to the Helm chart.
-This variable contains the necessary configuration for the ECR Pull-Through Cache Rules.
+
+These `helm_values_yaml` variables inform the controllers of the location of the deployed cloud resources, such as SQS queues, S3 VPC endpoints, and IAM roles, and ECR pull-through cache rules.
 You can use it in your Helm chart as follows:
 
 ```hcl
@@ -272,11 +242,12 @@ resource "helm_release" "kompass_compute" {
   values = [
     module.ecr.helm_values_yaml,
     module.kompass_compute.helm_values_yaml,
+    # Add any additional values here
   ]
 }
 ```
 
-The `helm_values_yaml` can be also accessed using the `terraform_remote_state` data source.
+The `helm_values_yaml` can be also accessed using the `terraform_remote_state` data source if you want to access it from a separate terraform module.
 
 The `helm_values_yaml` from ECR module contains the ECR Pull-Through Cache Rules configuration,
 and has the following structure:
@@ -307,8 +278,10 @@ qubexConfig:
 ## Using IAM Roles for Service Accounts (IRSA)
 
 By default the module creates EKS Pod Identity roles for the Kompass Compute controller components.
+
 If you want to use IRSA (IAM Roles for Service Accounts) instead, set the `enable_irsa` variable to `true`
 and provide the OIDC provider ARN using the `irsa_oidc_provider_arn` variable.
+
 Optionally, you can disable EKS Pod Identity by setting `enable_pod_identity` to `false`.
 
 ```hcl
@@ -329,7 +302,7 @@ module "kompass_compute" {
 S3 VPC Interface Endpoint is created by default to allow the Kompass Compute controller to access container images stored securely and cheaply.
 Images are not downloaded from the public internet, but rather from the S3 VPC Interface Endpoint.
 
-If you already have a S3 VPC Gateway Endpoint or you want to disable the creation of the S3 VPC Interface Endpoint,
+If you have a S3 VPC Gateway Endpoint or any other reason that makes you want to disable the creation of the S3 VPC Interface Endpoint,
 set the `create_s3_vpc_endpoint` variable to `false`:
 
 ```hcl
