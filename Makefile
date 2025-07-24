@@ -1,4 +1,4 @@
-MODULES := modules/ecr modules/iam ./ examples/all-in-one examples/separate/1-ecr examples/separate/2-kompass
+MODULES := modules/ecr modules/iam
 
 .PHONY: all
 all: init validate fmt lint clean docs
