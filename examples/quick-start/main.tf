@@ -1,7 +1,7 @@
 locals {
-  vpc_id       = data.aws_eks_cluster.this.vpc_config[0].vpc_id
-  vpc_cidr     = data.aws_vpc.this.cidr_block
-  subnet_ids   = data.aws_eks_cluster.this.vpc_config[0].subnet_ids
+  vpc_id     = data.aws_eks_cluster.this.vpc_config[0].vpc_id
+  vpc_cidr   = data.aws_vpc.this.cidr_block
+  subnet_ids = data.aws_eks_cluster.this.vpc_config[0].subnet_ids
 }
 
 data "aws_eks_cluster" "this" {
