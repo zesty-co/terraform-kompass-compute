@@ -35,15 +35,15 @@ There are three ways to install Kompass Compute with basic setup:
 
 The simplest way to install involves creating a Terraform configuration with the following components:
 
-1. A provider section that help with the following things:
+1. A provider section that helps with the following things:
    1. AWS provider - Get cluster information.
    2. Helm provider - Deploy the Kompass Compute Helm chart.
-2. Invocation of the kompass-compute module that install all required AWS resources.
+2. Invocation of the kompass-compute module that installs all required AWS resources.
 3. Invocation of the helm_release resource to deploy the Kompass Compute Helm chart.
     - The output of the kompass-compute module includes a values.yaml that gives the kompass-compute helm chart knowledge about the location of the deployed cloud resources.\
     The configuration below performs the plumbing.
 
-Below is a sample configuration for configuring the necasarry providers, that help perform the later steps.
+Below is a sample configuration for the necessary providers that help perform the later steps.
 
 If your setup is different, you will need to adjust the configuration accordingly.
 
@@ -205,7 +205,7 @@ provider "helm" {
 
 You might want to install the helm chart directly through a GitOps tool, such as ArgoCD, or something else.
 
-The helm chart requires knowledge about cloud resources deployed by the kompass-compute module, such as SQS queues, S3 VPC endpoints, and IAM roles, and ECR pull-through cache rules.
+The helm chart requires knowledge about cloud resources deployed by the kompass-compute module, such as SQS queues, S3 VPC endpoints, IAM roles, and ECR pull-through cache rules.
 
 The terraform module outputs a values.yaml file that can be used to pass values to the helm chart.
 
@@ -213,7 +213,7 @@ First deploy the module with all the required resources.
 
 Afterwards, the values.yaml can be retrieved from the terraform module directory by running `terraform output -raw helm_values_yaml > values.yaml`
 
-Visit the [helm chart repo](https://github.com/zesty-co/kompass-compute), follow the instructions, and provide it with the values.yaml from the afforementioned command.
+Visit the [helm chart repo](https://github.com/zesty-co/kompass-compute), follow the instructions, and provide it with the values.yaml from the aforementioned command.
 
 &nbsp;
 
@@ -284,7 +284,7 @@ resource "helm_release" "kompass_compute" {
 
 The `kompass_compute` module and the `ecr` module output a `helm_values_yaml` variable that can be used to pass values to the Helm chart.
 
-These `helm_values_yaml` variables inform the controllers of the location of the deployed cloud resources, such as SQS queues, S3 VPC endpoints, and IAM roles, and ECR pull-through cache rules.
+These `helm_values_yaml` variables inform the controllers of the location of the deployed cloud resources, such as SQS queues, S3 VPC endpoints, IAM roles, and ECR pull-through cache rules.
 You can use it in your Helm chart as follows:
 
 ```hcl
@@ -354,10 +354,10 @@ module "kompass_compute" {
 
 ## Disable S3 VPC Interface Endpoint creation
 
-S3 VPC Interface Endpoint is created by default to allow the Kompass Compute controller to access container images stored securely and cheaply.
+An S3 VPC Interface Endpoint is created by default to allow the Kompass Compute controller to access container images stored securely and cheaply.
 Images are not downloaded from the public internet, but rather from the S3 VPC Interface Endpoint.
 
-If you have a S3 VPC Gateway Endpoint or any other reason that makes you want to disable the creation of the S3 VPC Interface Endpoint,
+If you have an S3 VPC Gateway Endpoint or any other reason to disable the creation of the S3 VPC Interface Endpoint,
 set the `create_s3_vpc_endpoint` variable to `false`:
 
 ```hcl
