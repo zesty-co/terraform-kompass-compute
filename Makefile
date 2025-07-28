@@ -1,4 +1,4 @@
-MODULES := modules/ecr modules/iam
+MODULES := modules/ecr modules/iam examples/quick-start examples/installation-with-pullthrough-cache
 
 .PHONY: all
 all: init validate fmt lint clean docs

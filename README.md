@@ -5,15 +5,33 @@ This module allows installing Kompass Compute in an EKS cluster.
 
 It creates IAM roles, policies, SQS queues, and related resources for the Kompass Compute controller.
 
+## Table of Contents
+
+- [Prerequisites](#prerequisites)
+- [Quick Start](#quick-start)
+- [Deployed Resources](#deployed-resources)
+- [Provider Configuration](#provider-configuration)
+- [Installation instructions](#installation-instructions)
+- [Deploying the helm chart directly](#deploying-the-helm-chart-directly)
+- [Advanced Usage](#advanced-usage)
+- [API Reference](#requirements)
+
 ## Prerequisites
 
-* Kubernetes 1.19+
-* Helm 3.2.0+
-* Kompass Insight Agent installed in the cluster
-* kompass-compute [terraform module](https://github.com/zesty-co/terraform-kompass-compute) installed
-* Pod Identity enabled in the cluster, otherwise go to the [IRSA section](#using-iam-roles-for-service-accounts-irsa)
+- Kubernetes 1.19+
+- Helm 3.2.0+
+- [Kompass](https://github.com/zesty-co/kompass) installed in the cluster
+- Pod Identity enabled in the cluster, otherwise go to the [IRSA section](#using-iam-roles-for-service-accounts-irsa)
 
 ## Quick Start
+
+There are three ways to install Kompass Compute with basic setup:
+
+1. Using the [quick-start](./examples/quick-start/main.tf) example.
+2. Using the [instructions below](#installation-instructions).
+3. Deploying the cloud resources through this module and the Kubernetes resources through the [helm chart directly](#deploying-the-helm-chart-directly).
+
+## Installation instructions
 
 The simplest way to install involves creating a Terraform configuration with the following components:
 
@@ -22,7 +40,7 @@ The simplest way to install involves creating a Terraform configuration with the
    2. Helm provider - Deploy the Kompass Compute Helm chart.
 2. Invocation of the kompass-compute module that install all required AWS resources.
 3. Invocation of the helm_release resource to deploy the Kompass Compute Helm chart.
-    * The output of the kompass-compute module includes a values.yaml that gives the kompass-compute helm chart knowledge about the location of the deployed cloud resources.\
+    - The output of the kompass-compute module includes a values.yaml that gives the kompass-compute helm chart knowledge about the location of the deployed cloud resources.\
     The configuration below performs the plumbing.
 
 Below is a sample configuration for configuring the necasarry providers, that help perform the later steps.
@@ -88,12 +106,23 @@ module "kompass_compute" {
   }
 }
 
-# Deploy the Kompass Compute Helm chart.
+# The CRDs are managed by a separate chart, according to the helm best practices.
+resource "helm_release" "kompass_compute_crd" {
+  repository = "https://zesty-co.github.io/kompass-compute"
+  # If you want to specify the exact version of the chart:
+  # version    = "0.1.7"
+  chart     = "kompass-compute-crd"
+  name      = "kompass-compute-crd"
+  namespace = "zesty-system"
+}
+
 resource "helm_release" "kompass_compute" {
   repository = "https://zesty-co.github.io/kompass-compute"
   chart      = "kompass-compute"
   name       = "kompass-compute"
   namespace  = "zesty-system"
+
+  skip_crds = true # The CRDs are installed by the kompass-compute-crd chart
 
   values = [
     # Provide the helm chart with knowledge about the deployed cloud resources.
@@ -103,23 +132,24 @@ resource "helm_release" "kompass_compute" {
   depends_on = [
     # Prevents from removing IAM roles and policies while deleting the Helm release
     module.kompass_compute,
+    helm_release.kompass_compute_crd,
   ]
 }
 ```
 
 ## Deployed Resources
 
-* Creates IAM roles for various components of the Kompass Compute controller:
-  * Hiberscaler
-  * Image Size Calculator
-  * Snapshooter
-  * Telemetry Manager
+- Creates IAM roles for various components of the Kompass Compute controller:
+  - Hiberscaler
+  - Image Size Calculator
+  - Snapshooter
+  - Telemetry Manager
 
-* SQS queue for spot instance termination notifications
-* CloudWatch event rules for spot instance interruptions
-* S3 VPC endpoint for secure access to S3
-* Security groups for VPC endpoints
-* EKS Pod Identity or IRSA (IAM Roles for Service Accounts) resources configs.
+- SQS queue for spot instance termination notifications
+- CloudWatch event rules for spot instance interruptions
+- S3 VPC endpoint for secure access to S3
+- Security groups for VPC endpoints
+- EKS Pod Identity or IRSA (IAM Roles for Service Accounts) resources configs.
 
 ## Provider Configuration
 
@@ -171,9 +201,33 @@ provider "helm" {
 }
 ```
 
-## Advanced Usage
+## Deploying the helm chart directly
 
-### Pulling container images through ECR pull through cache
+You might want to install the helm chart directly through a GitOps tool, such as ArgoCD, or something else.
+
+The helm chart requires knowledge about cloud resources deployed by the kompass-compute module, such as SQS queues, S3 VPC endpoints, and IAM roles, and ECR pull-through cache rules.
+
+The terraform module outputs a values.yaml file that can be used to pass values to the helm chart.
+
+First deploy the module with all the required resources.
+
+Afterwards, the values.yaml can be retrieved from the terraform module directory by running `terraform output -raw helm_values_yaml > values.yaml`
+
+Visit the [helm chart repo](https://github.com/zesty-co/kompass-compute), follow the instructions, and provide it with the values.yaml from the afforementioned command.
+
+&nbsp;
+
+# Advanced Usage
+
+- [Pulling container images through ECR pull through cache](#pulling-container-images-through-ecr-pull-through-cache)
+- [Passing values to Helm Chart](#passing-values-to-helm-chart)
+- [Using IAM Roles for Service Accounts (IRSA)](#using-iam-roles-for-service-accounts-irsa)
+- [Disable S3 VPC Interface Endpoint creation](#disable-s3-vpc-interface-endpoint-creation)
+- [API Reference](#requirements)
+
+&nbsp;
+
+## Pulling container images through ECR pull through cache
 
 Caching the images on all Hibernated nodes can increase network costs.
 
@@ -219,13 +273,14 @@ resource "helm_release" "kompass_compute" {
   namespace  = "zesty-system"
 
   values = [
+    module.kompass_compute.helm_values_yaml,
     module.ecr.helm_values_yaml,
     # Add any additional values here, such as the values.yaml provided by the kompass-compute module
   ]
 }
 ```
 
-## Passing values to Helm Chart
+## Passing values to the Helm Chart
 
 The `kompass_compute` module and the `ecr` module output a `helm_values_yaml` variable that can be used to pass values to the Helm chart.
 

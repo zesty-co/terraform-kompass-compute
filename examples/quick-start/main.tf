@@ -16,6 +16,7 @@ data "aws_vpc" "this" {
 module "kompass_compute" {
   source  = "zesty-co/compute/kompass"
   version = "~> 1.0.0"
+  # source = "../../modules/ecr"
 
   cluster_name = var.cluster_name
   vpc_id       = local.vpc_id
@@ -29,12 +30,25 @@ module "kompass_compute" {
   }
 }
 
-# Deploy the Kompass Compute Helm chart.
+# The CRDs are managed by a separate chart, according to the helm best practices.
+resource "helm_release" "kompass_compute_crd" {
+  repository = "https://zesty-co.github.io/kompass-compute"
+  # If you want to specify the exact version of the chart:
+  # version    = "0.1.7"
+  chart     = "kompass-compute-crd"
+  name      = "kompass-compute-crd"
+  namespace = "zesty-system"
+}
+
 resource "helm_release" "kompass_compute" {
   repository = "https://zesty-co.github.io/kompass-compute"
   chart      = "kompass-compute"
-  name       = "kompass-compute"
-  namespace  = "zesty-system"
+  # If you want to specify the exact version of the chart:
+  # version    = "0.1.7"
+  name      = "kompass-compute"
+  namespace = "zesty-system"
+
+  skip_crds = true # The CRDs are installed by the kompass-compute-crd chart
 
   values = [
     # Provide the helm chart with knowledge about the deployed cloud resources.
@@ -44,5 +58,6 @@ resource "helm_release" "kompass_compute" {
   depends_on = [
     # Prevents from removing IAM roles and policies while deleting the Helm release
     module.kompass_compute,
+    helm_release.kompass_compute_crd,
   ]
 }

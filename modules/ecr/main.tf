@@ -156,11 +156,11 @@ locals {
       upstream_registry_url = "quay.io"
     },
     "dockerhub" = {
-      create                = true
+      create                = false
       upstream_registry_url = "registry-1.docker.io"
     },
     "ghcr" = {
-      create                = true
+      create                = false
       upstream_registry_url = "ghcr.io"
     }
   }
@@ -168,7 +168,7 @@ locals {
   # Merge the default registries with the user-defined registries
   registries = {
     for k in nonsensitive(keys(merge(local.default_registries, var.registries))) : k => {
-      create                         = nonsensitive(coalesce(try(var.registries[k].create, true), try(local.default_registries[k].create, true)))
+      create                         = nonsensitive(coalesce(try(var.registries[k].create, null), try(local.default_registries[k].create, true)))
       upstream_registry_url          = nonsensitive(try(coalesce(try(var.registries[k].upstream_registry_url, null), try(local.default_registries[k].upstream_registry_url, null)), null))
       ecr_repository_prefix_override = nonsensitive(try(coalesce(try(var.registries[k].ecr_repository_prefix_override, null), try(local.default_registries[k].ecr_repository_prefix_override, null)), null))
       secret_arn                     = nonsensitive(try(coalesce(try(var.registries[k].secret_arn, null), try(local.default_registries[k].secret_arn, null)), null))
