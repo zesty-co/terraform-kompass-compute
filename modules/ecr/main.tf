@@ -26,13 +26,18 @@
  *   # You can provide secret ARN or secret content in format: "{\"username\":\"USERNAME\",\"accessToken\":\"TOKEN\"}"
  *   registries = {
  *     dockerhub = {
- *       secret_content = jsonencode({
- *         username    = "your-username"
- *         accessToken = "your-access-token"
- *       })
+ *       secret_arn = "aws:secretsmanager:REGION:ACCOUNT_ID:secret:ecr-pullthroughcache/dockerhub"
+ *       // secret_content = jsonencode({
+ *       //   username    = "your-username"
+ *       //   accessToken = "your-access-token"
+ *       // })
  *     }
  *     ghcr = {
- *       secret_arn = "aws:secretsmanager:REGION:123456789012:secret:ecr-pullthroughcache/ghcr"
+ *       secret_arn = "aws:secretsmanager:REGION:ACCOUNT_ID:secret:ecr-pullthroughcache/ghcr"
+ *       // secret_content = jsonencode({
+ *       //   username    = "your-username"
+ *       //   accessToken = "your-access-token"
+ *       // })
  *     }
  *   }
  * }

@@ -31,6 +31,9 @@ override.tf.json
 .terraformrc
 terraform.rc
 
+# Ignore backend configuration
+backend.tf
+
 # For debugging purposes only
 dev/
 
