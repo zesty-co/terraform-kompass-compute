@@ -1,9 +1,145 @@
 <!-- BEGIN_TF_DOCS -->
 # Zesty Kompass Compute Module
 
-This Terraform module creates and manages IAM roles, policies, and related resources for the Zesty Kompass Compute controller.
+This module allows installing Kompass Compute in an EKS cluster.
 
-## Features
+It creates IAM roles, policies, SQS queues, and related resources for the Kompass Compute controller.
+
+## Table of Contents
+
+- [Prerequisites](#prerequisites)
+- [Quick Start](#quick-start)
+- [Deployed Resources](#deployed-resources)
+- [Provider Configuration](#provider-configuration)
+- [Installation instructions](#installation-instructions)
+- [Deploying the helm chart directly](#deploying-the-helm-chart-directly)
+- [Advanced Usage](#advanced-usage)
+- [API Reference](#requirements)
+
+## Prerequisites
+
+- Kubernetes 1.19+
+- Helm 3.2.0+
+- [Kompass](https://github.com/zesty-co/kompass) installed in the cluster
+- EKS Pod Identity enabled in the cluster, otherwise go to the [IRSA section](#using-iam-roles-for-service-accounts-irsa)
+
+## Quick Start
+
+There are three ways to install Kompass Compute with basic setup:
+
+1. Using the [quick-start](./examples/quick-start/main.tf) example.
+2. Using the [instructions below](#installation-instructions).
+3. Deploying the cloud resources through this module and the Kubernetes resources through the [helm chart directly](#deploying-the-helm-chart-directly).
+
+## Installation instructions
+
+The simplest way to install involves creating a Terraform configuration with the following components:
+
+1. A provider section that helps with the following things:
+   1. AWS provider - Get cluster information.
+   2. Helm provider - Deploy the Kompass Compute Helm chart.
+2. Invocation of the kompass-compute module that installs all required AWS resources.
+3. Invocation of the helm\_release resource to deploy the Kompass Compute Helm chart.
+   - The output of the kompass-compute module includes a values.yaml that gives the kompass-compute helm chart knowledge about the location of the deployed cloud resources.\
+     The configuration below performs the plumbing.
+
+Below is a sample configuration for the necessary providers that help perform the later steps.
+
+If your setup is different, you will need to adjust the configuration accordingly.
+
+```hcl
+provider "aws" {}
+
+data "aws_eks_cluster" "eks_cluster" {
+  name = var.cluster_name
+}
+
+provider "helm" {
+  kubernetes = {
+    host                   = data.aws_eks_cluster.eks_cluster.endpoint
+    cluster_ca_certificate = base64decode(data.aws_eks_cluster.eks_cluster.certificate_authority[0].data)
+
+    exec = {
+      api_version = "client.authentication.k8s.io/v1beta1"
+      command     = "aws"
+      # This requires the awscli to be installed locally where Terraform is executed
+      args = ["eks", "get-token", "--cluster-name", var.cluster_name]
+    }
+  }
+}
+```
+
+> This configuration works for helm version 3, for version 2 see the [Provider Configuration](#provider-configuration) section.
+
+Below is a configuration that deploys the Kompass Compute module and the Kompass Compute Helm chart.
+
+```hcl
+locals {
+  cluster_name = "cluster-name"
+  vpc_id       = data.aws_eks_cluster.this.vpc_config[0].vpc_id
+  vpc_cidr     = data.aws_vpc.this.cidr_block
+  subnet_ids   = data.aws_eks_cluster.this.vpc_config[0].subnet_ids
+}
+
+data "aws_eks_cluster" "this" {
+  name = local.cluster_name
+}
+
+data "aws_vpc" "this" {
+  id = data.aws_eks_cluster.this.vpc_config[0].vpc_id
+}
+
+# Creates the cloud resources for Kompass Compute.
+module "kompass_compute" {
+  source  = "zesty-co/compute/kompass"
+  version = "~> 1.0.0"
+
+  cluster_name = local.cluster_name
+  vpc_id       = local.vpc_id
+  subnet_ids   = local.subnet_ids
+
+  vpc_endpoint_security_group_rules = {
+    ingress_https = {
+      description = "HTTPS from VPC"
+      cidr_blocks = [local.vpc_cidr]
+    }
+  }
+}
+
+# The CRDs are managed by a separate chart, according to the helm best practices.
+resource "helm_release" "kompass_compute_crd" {
+  repository = "https://zesty-co.github.io/kompass-compute"
+  # If you want to specify the exact version of the chart:
+  # version    = "0.1.7"
+  chart     = "kompass-compute-crd"
+  name      = "kompass-compute-crd"
+  namespace = "zesty-system"
+}
+
+resource "helm_release" "kompass_compute" {
+  repository = "https://zesty-co.github.io/kompass-compute"
+  chart      = "kompass-compute"
+  # If you want to specify the exact version of the chart:
+  # version    = "0.1.7"
+  name       = "kompass-compute"
+  namespace  = "zesty-system"
+
+  skip_crds = true # The CRDs are installed by the kompass-compute-crd chart
+
+  values = [
+    # Provide the helm chart with knowledge about the deployed cloud resources.
+    module.kompass_compute.helm_values_yaml,
+  ]
+
+  depends_on = [
+    # Prevents from removing IAM roles and policies while deleting the Helm release
+    module.kompass_compute,
+    helm_release.kompass_compute_crd,
+  ]
+}
+```
+
+## Deployed Resources
 
 - Creates IAM roles for various components of the Kompass Compute controller:
   - Hiberscaler
@@ -11,11 +147,11 @@ This Terraform module creates and manages IAM roles, policies, and related resou
   - Snapshooter
   - Telemetry Manager
 
-- Configures SQS queue for spot instance termination notifications
-- Sets up CloudWatch event rules for spot instance interruptions
-- Creates S3 VPC endpoint for secure access to S3
-- Configures security groups for VPC endpoints
-- Supports both EKS Pod Identity and IRSA (IAM Roles for Service Accounts)
+- SQS queue for spot instance termination notifications
+- CloudWatch event rules for spot instance interruptions
+- S3 VPC endpoint for secure access to S3
+- Security groups for VPC endpoints
+- EKS Pod Identity or IRSA (IAM Roles for Service Accounts) resources configs.
 
 ## Provider Configuration
 
@@ -67,291 +203,52 @@ provider "helm" {
 }
 ```
 
-## Usage
+## Deploying the helm chart directly
 
-### All in One
+You might want to install the helm chart directly through a GitOps tool, such as ArgoCD, or something else.
 
-Note: It is recommended to deploy `ecr` module only once per region.
-ECR pull-through cache rules are regional resources, and creating them multiple times
-is not necessary and may lead to conflicts.
+The helm chart requires knowledge about cloud resources deployed by the kompass-compute module, such as SQS queues, S3 VPC endpoints, IAM roles, and ECR pull-through cache rules.
 
-Check the [All in One example](examples/all-in-one) for a complete setup.
+The terraform module outputs a values.yaml file that can be used to pass values to the helm chart.
 
-```hcl
-locals {
-  cluster_name = "cluster-name"
-  vpc_id       = data.aws_eks_cluster.this.vpc_config[0].vpc_id
-  vpc_cidr     = data.aws_vpc.this.cidr_block
-  subnet_ids   = data.aws_eks_cluster.this.vpc_config[0].subnet_ids
-}
+First deploy the module with all the required resources.
 
-data "aws_eks_cluster" "this" {
-  name = local.cluster_name
-}
+Afterwards, the values.yaml can be retrieved from the terraform module directory by running `terraform output -raw helm_values_yaml > values.yaml`
 
-data "aws_vpc" "this" {
-  id = data.aws_eks_cluster.this.vpc_config[0].vpc_id
-}
+Visit the [helm chart repo](https://github.com/zesty-co/kompass-compute), follow the instructions, and provide it with the values.yaml from the aforementioned command.
 
-# Creates ECR pull-through cache rules and manages authentication credentials in AWS Secrets Manager.
-module "ecr" {
-  source  = "zesty-co/compute/kompass//modules/ecr"
-  version = "~> 1.0.0"
+# Advanced Usage
 
-  ecr_pull_through_rule_name_prefix = "cluster-name-"
+- [Pulling container images through ECR pull through cache](#pulling-container-images-through-ecr-pull-through-cache)
+- [Passing values to Helm Chart](#passing-values-to-helm-chart)
+- [Using IAM Roles for Service Accounts (IRSA)](#using-iam-roles-for-service-accounts-irsa)
+- [Disable S3 VPC Interface Endpoint creation](#disable-s3-vpc-interface-endpoint-creation)
+- [API Reference](#requirements)
 
-  registries = {
-    "dockerhub" = {
-      secret_arn = "aws:secretsmanager:REGION:123456789012:secret:ecr-pullthroughcache/dockerhub"
-    },
-    "ghcr" = {
-      secret_arn = "aws:secretsmanager:REGION:123456789012:secret:ecr-pullthroughcache/ghcr"
-    }
-  }
-}
+## Pulling container images through ECR pull through cache
 
-# Creates IAM roles and policies, SQS queues, and other resources for Kompass Compute.
-module "kompass_compute" {
-  source  = "zesty-co/compute/kompass"
-  version = "~> 1.0.0"
+Caching the images on all Hibernated nodes can increase network costs.
 
-  cluster_name = local.cluster_name
-  vpc_id       = local.vpc_id
-  subnet_ids   = local.subnet_ids
+To reduce network costs, it's recommended to configure an ECR Pull-Through Cache and configure the nodes to pull images through it, thus only downloading each image from the internet once.
 
-  vpc_endpoint_security_group_rules = {
-    ingress_https = {
-      description = "HTTPS from VPC"
-      cidr_blocks = [local.vpc_cidr]
-    }
-  }
-}
-
-# Deploys the Kompass Compute Helm chart to the EKS cluster.
-resource "helm_release" "kompass_compute" {
-  repository = "https://zesty-co.github.io/kompass-compute"
-  chart      = "kompass-compute"
-  name       = "kompass-compute"
-  namespace  = "zesty-system"
-
-  # Get values from the ECR module, Kompass Compute module, and user-defined values
-  values = [
-    module.ecr.helm_values_yaml,
-    module.kompass_compute.helm_values_yaml,
-  ]
-
-  depends_on = [
-    # Prevents from removing IAM roles and policies while deleting the Helm release
-    module.kompass_compute,
-  ]
-}
-```
-
-### Separate modules
-
-It is suggested to use the `ecr` module separately to create ECR pull-through cache rules once per region.
-
-Check the [Separate modules example](examples/separate) for a complete setup.
-
-To deploy the ECR pull-through cache rules, use the `ecr` module:
-
-```hcl
-# Creates ECR pull-through cache rules and manages authentication credentials in AWS Secrets Manager.
-module "ecr" {
-  source  = "zesty-co/compute/kompass//modules/ecr"
-  version = "~> 1.0.0"
-
-  registries = {
-    "dockerhub" = {
-      secret_arn = "aws:secretsmanager:REGION:123456789012:secret:ecr-pullthroughcache/dockerhub"
-    },
-    "ghcr" = {
-      secret_arn = "aws:secretsmanager:REGION:123456789012:secret:ecr-pullthroughcache/ghcr"
-    }
-  }
-}
-```
-
-After that, you can deploy the Kompass Compute per cluster using this module:
-
-```hcl
-locals {
-  cluster_name = "cluster-name"
-  vpc_id       = data.aws_eks_cluster.this.vpc_config[0].vpc_id
-  vpc_cidr     = data.aws_vpc.this.cidr_block
-  subnet_ids   = data.aws_eks_cluster.this.vpc_config[0].subnet_ids
-}
-
-data "aws_eks_cluster" "this" {
-  name = local.cluster_name
-}
-
-data "aws_vpc" "this" {
-  id = data.aws_eks_cluster.this.vpc_config[0].vpc_id
-}
-
-# Creates IAM roles and policies, SQS queues, and other resources for Kompass Compute.
-module "kompass_compute" {
-  source  = "zesty-co/compute/kompass"
-  version = "~> 1.0.0"
-
-  cluster_name = local.cluster_name
-  vpc_id       = local.vpc_id
-  subnet_ids   = local.subnet_ids
-
-  vpc_endpoint_security_group_rules = {
-    ingress_https = {
-      description = "HTTPS from VPC"
-      cidr_blocks = [local.vpc_cidr]
-    }
-  }
-}
-```
-
-Helm values from `ecr` and `kompass_compute` modules can be used to configure the Helm chart for Kompass Compute.
-Check the [Passing values to Helm Chart](#passing-values-to-helm-chart) section for more details.
-
-## ECR Pull-Through Cache secrets
-
-The `ecr` module can use existing secrets or create new ones in AWS Secrets Manager for the ECR Pull-Through Cache Rules.
-You can specify the secrets using either `secret_arn` or `secret_content`.
-
-Format of the `secret_content` or secret in AWS Secrets Manager should be a JSON string containing the `username` and `accessToken` fields:
-
-```json
-{
-  "username": "your-username",
-  "accessToken": "your-access-token"
-}
-```
-
-## Disable ECR Pull-Through Cache Rule creation
-
-To disable the creation of the ECR Pull-Through Cache Rule, set the `create` variable to `false`:
+The ECR pull through rules can be created using the `ecr` module as follows:
 
 ```hcl
 module "ecr" {
   source  = "zesty-co/compute/kompass//modules/ecr"
   version = "~> 1.0.0"
 
-  registries = {
-    "dockerhub" = {
-      create = false
-    },
-    "ghcr" = {
-      create = false
-    }
-  }
-}
+  ecr_pull_through_rule_name_prefix = "<Cluster Name>-"
+
+  # By default the ecr module creates an ECR pull through cache rule for each of the supported registries.
+  # If you want to disable the creation of the ECR pull through cache rule for a specific registry, set the `create` variable to `false`.
+  # If you want to specify credentials for a specific registry to access private images or avoid rate limits, set the `secret_arn` variable to the ARN of the secret, or `secret_content` to the content of the secret.
+
+  # registries = {
+  #   "dockerhub" = {
+  #     create = false
+  #     secret_arn = "<Dockerhub Secret ARN>"
 ```
-
-## Passing values to Helm Chart
-
-The module and the `ecr` module output a `helm_values_yaml` variable that can be used to pass values to the Helm chart.
-This variable contains the necessary configuration for the ECR Pull-Through Cache Rules.
-You can use it in your Helm chart as follows:
-
-```hcl
-resource "helm_release" "kompass_compute" {
-  repository = "https://zesty-co.github.io/kompass-compute"
-  chart      = "kompass-compute"
-  name       = "kompass-compute"
-  namespace  = "zesty-system"
-
-  values = [
-    module.ecr.helm_values_yaml,
-    module.kompass_compute.helm_values_yaml,
-  ]
-}
-```
-
-The `helm_values_yaml` can be also accessed using the `terraform_remote_state` data source.
-
-The `helm_values_yaml` from ECR module contains the ECR Pull-Through Cache Rules configuration,
-and has the following structure:
-
-```yaml
-cachePullMappings:
-  dockerhub:
-    - proxyAddress: "123456789012.dkr.ecr.us-west-2.amazonaws.com/zesty-dockerhub"
-  ghcr:
-    - proxyAddress: "123456789012.dkr.ecr.us-west-2.amazonaws.com/zesty-ghcr"
-  ecr:
-    - proxyAddress: "123456789012.dkr.ecr.us-west-2.amazonaws.com/zesty-ecr"
-  k8s:
-    - proxyAddress: "123456789012.dkr.ecr.us-west-2.amazonaws.com/zesty-k8s"
-  quay:
-    - proxyAddress: "123456789012.dkr.ecr.us-west-2.amazonaws.com/zesty-quay"
-```
-
-Name of the ECR repository will be in the format `zesty-{registry_name}` where `{registry_name}` is the key from the `registries` map (e.g., `zesty-dockerhub`, `zesty-ghcr`, etc.).
-It can be overridden by setting the `ecr_pull_through_rule_name_prefix` variable in the module configuration,
-or by using the `ecr_repository_prefix_override` field in the `registries` map for each registry.
-
-The `helm_values_yaml` from the Kompass Compute module contains the necessary configuration for the Kompass Compute controller.
-It has the following structure:
-
-```yaml
-qubexConfig:
-  infraConfig:
-    aws:
-      spotFailuresQueueUrl: "https://sqs.us-west-2.amazonaws.com/123456789012/ZestyKompassCompute-cluster-name"
-      s3VpcEndpointID: "vpce-1234567890abcdef0"
-```
-
-## EKS Pod Identity and IRSA (IAM Roles for Service Accounts)
-
-By default the module creates EKS Pod Identity roles for the Kompass Compute controller components.
-If you want to use IRSA (IAM Roles for Service Accounts) instead, set the `enable_irsa` variable to `true`
-and provide the OIDC provider ARN using the `irsa_oidc_provider_arn` variable.
-Optionally, you can disable EKS Pod Identity by setting `enable_pod_identity` to `false`.
-
-```hcl
-module "kompass_compute" {
-  source  = "zesty-co/compute/kompass"
-  version = "~> 1.0.0"
-
-  cluster_name = "cluster-name"
-  vpc_id       = "vpc-12345678"
-  subnet_ids   = ["subnet-12345678", "subnet-87654321"]
-
-  enable_pod_identity    = false
-  enable_irsa            = true
-  irsa_oidc_provider_arn = "arn:aws:iam::123456789012:oidc-provider/oidc.eks.us-west-2.amazonaws.com/id/EXAMPLE1234567890"
-
-  vpc_endpoint_security_group_rules = {
-    ingress_https = {
-      description = "HTTPS from VPC"
-      cidr_blocks = ["10.0.0.0/16"]
-    }
-  }
-}
-```
-
-## Disable S3 VPC Interface Endpoint creation
-
-S3 VPC Interface Endpoint is created by default to allow the Kompass Compute controller to access container images stored securely and cheaply.
-Images are not downloaded from the public internet, but rather from the S3 VPC Interface Endpoint.
-
-If you already have a S3 VPC Gateway Endpoint or you want to disable the creation of the S3 VPC Interface Endpoint,
-set the `create_s3_vpc_endpoint` variable to `false`:
-
-```hcl
-module "kompass_compute" {
-  source  = "zesty-co/compute/kompass"
-  version = "~> 1.0.0"
-
-  cluster_name           = "cluster-name"
-  create_s3_vpc_endpoint = false
-}
-```
-
-## Upgrade
-
-To upgrade the Terraform modules, update the `version` attributes in your module blocks to the desired release.
-Run `terraform init -upgrade` to fetch the latest versions, then `terraform plan` and `terraform apply` to apply changes.
-
-To upgrade the Helm chart, update the `version` attribute your `helm_release` resource. Run `terraform apply` to deploy the new chart version.
 
 ## Requirements
 

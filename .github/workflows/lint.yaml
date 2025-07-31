@@ -28,6 +28,7 @@ jobs:
           sudo mv terraform-docs-extract/terraform-docs /usr/local/bin/terraform-docs
           rm -rf terraform-docs-extract
           rm -f terraform-docs.tar.gz
+          terraform-docs -v
         env:
           VERSION: 0.20.0
 

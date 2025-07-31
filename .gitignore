@@ -31,9 +31,8 @@ override.tf.json
 .terraformrc
 terraform.rc
 
-# Ignore providers configuration
+# Ignore backend configuration
 backend.tf
-providers.tf
 
 # For debugging purposes only
 dev/
