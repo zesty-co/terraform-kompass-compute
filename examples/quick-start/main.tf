@@ -42,7 +42,7 @@ data "aws_vpc" "this" {
 module "kompass_compute" {
   source  = "zesty-co/compute/kompass"
   version = "~> 1.0.0"
-  # source = "../../modules/ecr"
+  # source = "../../"
 
   cluster_name = var.cluster_name
   vpc_id       = local.vpc_id

@@ -46,7 +46,7 @@ data "aws_vpc" "this" {
 module "kompass_compute" {
   source  = "zesty-co/compute/kompass"
   version = "~> 1.0.0"
-  # source = "../../modules"
+  # source = "../../"
 
   cluster_name = var.cluster_name
   vpc_id       = local.vpc_id
@@ -61,9 +61,9 @@ module "kompass_compute" {
 }
 
 module "ecr" {
-  # source  = "zesty-co/compute/kompass//modules/ecr"
-  # version = "~> 1.0.0"
-  source = "../../modules/ecr"
+  source  = "zesty-co/compute/kompass//modules/ecr"
+  version = "~> 1.0.0"
+  # source = "../../modules/ecr"
 
   ecr_pull_through_rule_name_prefix = "${var.cluster_name}-"
 }
