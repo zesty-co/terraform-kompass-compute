@@ -27,6 +27,7 @@ data "aws_iam_policy_document" "hiberscaler" {
     actions = [
       "ecr-public:GetAuthorizationToken",
       "ecr:GetAuthorizationToken",
+      "sts:GetServiceBearerToken",
     ]
   }
 
@@ -254,6 +255,7 @@ data "aws_iam_policy_document" "image_size_calculator" {
     actions = [
       "ecr-public:GetAuthorizationToken",
       "ecr:GetAuthorizationToken",
+      "sts:GetServiceBearerToken",
     ]
   }
 
