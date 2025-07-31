@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.3](https://github.com/zesty-co/terraform-kompass-compute/compare/v1.0.2...v1.0.3) (2025-07-31)
+
+
+### Bug Fixes
+
+* Improve ECR Public IAM permissions which requires `sts:GetServiceBearerToken` ([#14](https://github.com/zesty-co/terraform-kompass-compute/issues/14)) ([7055bd6](https://github.com/zesty-co/terraform-kompass-compute/commit/7055bd6d425aa05bba0890d302dad44b6d6a9b89))
+
 ## [1.0.2](https://github.com/zesty-co/terraform-kompass-compute/compare/v1.0.1...v1.0.2) (2025-07-08)
 
 
