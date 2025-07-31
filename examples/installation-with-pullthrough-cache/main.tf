@@ -1,9 +1,10 @@
 /*
 * # Quick Start
+*
 * This example shows how to install Kompass Compute with the most basic setup.
 * It deploys 4 components:
-* 1. A set of default pull-through cache rules.\
-* They are used to reduce network costs, by only pulling images from the internet once, and after that pulling them from inside the VPC.\
+* 1. A set of default pull-through cache rules.
+* They are used to reduce network costs, by only pulling images from the internet once, and after that pulling them from inside the VPC.
 * To create pull-through cache for dockerhub and ghcr, or configure credentials for a private registry, see the [ECR module](../../modules/ecr/README.md).
 * 2. The Kompass Compute module, which creates the cloud resources for Kompass Compute.
 * 3. The Kompass Compute Helm chart.
@@ -14,10 +15,10 @@
 * Before applying the module, ensure that the providers target the correct EKS cluster, and AWS account.
 *
 * You need to ensure the following:
-* 1. The AWS provider is configured to target the correct AWS account.\
-* By default the module will use the accounted configured in your local aws cli.\
+* 1. The AWS provider is configured to target the correct AWS account.
+* By default the module will use the accounted configured in your local aws cli.
 * It can be overriden by modifying the `aws` provider configuration inside [providers.tf](./providers.tf).
-* 2. The name of the EKS cluster is provided in the `cluster_name` variable through a tfvars or env var.\
+* 2. The name of the EKS cluster is provided in the `cluster_name` variable through a tfvars or env var.
 * See [variables.tf](./variables.tf) for more details.
 * 3. You have the helm binary installed and available in your PATH and the helm provider is configured correctly.
 *
