@@ -9,14 +9,16 @@ It deploys 3 components:
 Before applying the module, ensure that the providers target the correct EKS cluster, and AWS account.
 
 You need to ensure the following:
-1. The AWS provider is configured to target the correct AWS account.\
-By default the module will use the accounted configured in your local aws cli.\
+
+1. The AWS provider is configured to target the correct AWS account.
+By default the module will use the accounted configured in your local aws cli.
 It can be overriden by modifying the `aws` provider configuration inside [providers.tf](./providers.tf).
-2. The name of the EKS cluster is provided in the `cluster_name` variable through a tfvars or env var.\
+2. The name of the EKS cluster is provided in the `cluster_name` variable through a tfvars or env var.
 See [variables.tf](./variables.tf) for more details.
 3. You have the helm binary installed and available in your PATH and the helm provider is configured correctly.
 
 The module works in the following order:
+
 1. Scrapes the EKS cluster for information.
 2. Creates the cloud resources for Kompass Compute.
 3. Deploys the CRDs of the Kompass Compute Helm chart, through a separate chart, according to the helm best practices.
