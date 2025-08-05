@@ -32,11 +32,16 @@ jobs:
         env:
           VERSION: 0.20.0
 
-      - name: run all checks
+      - name: Install markdown-link-check
+        run: |
+          npm install -g markdown-link-check
+
+      - name: Run all checks
         run: |
           make all
 
-      - name: check for changes
+      - name: Check for changes
         run: |
           git diff --exit-code || (echo "There are changes in the repository. Please commit them." && exit 1)
           echo "No changes detected."
+        

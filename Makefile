@@ -1,7 +1,7 @@
 MODULES := ./ modules/ecr modules/iam examples/quick-start examples/installation-with-pullthrough-cache
 
 .PHONY: all
-all: init validate fmt lint clean docs
+all: init validate fmt lint clean docs check-broken-links
 
 .PHONY: init
 init:
@@ -45,6 +45,16 @@ lint: init
 		if [ -d "$$module" ]; then \
 			echo "Linting $$module"; \
 			cd $$module && tflint && cd - > /dev/null; \
+		fi; \
+	done
+
+.PHONY: check-broken-links
+check-broken-links:
+	@echo "Checking for broken links in README files..."
+	@for module in $(MODULES); do \
+		if [ -d "$$module" ]; then \
+			echo "Checking for broken links in $$module"; \
+			cd $$module && markdown-link-check README.md && cd - > /dev/null; \
 		fi; \
 	done
 

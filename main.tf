@@ -220,7 +220,7 @@
 * # Advanced Usage
 *
 * - [Pulling container images through ECR pull through cache](#pulling-container-images-through-ecr-pull-through-cache)
-* - [Passing values to Helm Chart](#passing-values-to-helm-chart)
+* - [Passing values to the Helm Chart](#passing-values-to-the-helm-chart)
 * - [Using IAM Roles for Service Accounts (IRSA)](#using-iam-roles-for-service-accounts-irsa)
 * - [Disable S3 VPC Interface Endpoint creation](#disable-s3-vpc-interface-endpoint-creation)
 * - [API Reference](#requirements)
@@ -248,11 +248,11 @@
 *   #   "dockerhub" = {
 *   #     create = false
 *   #     secret_arn = "<Dockerhub Secret ARN>"
-          # If you want to create a secret out of credentials, instead of using an existing secret
-          secret_content = jsonencode({
-            username    = "your-username"
-            accessToken = "your-access-token"
-          })
+*          # If you want to create a secret out of credentials, instead of using an existing secret
+*          secret_content = jsonencode({
+*            username    = "your-username"
+*            accessToken = "your-access-token"
+*          })
 *   #   },
 *   #   "ghcr" = {
 *   #     secret_arn = "<GitHub Container Registry Secret ARN>"
