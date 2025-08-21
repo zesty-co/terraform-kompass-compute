@@ -124,8 +124,6 @@
 *   name       = "kompass-compute"
 *   namespace  = "zesty-system"
 *
-*   skip_crds = true # The CRDs are installed by the kompass-compute-crd chart
-*
 *   values = [
 *     # Provide the helm chart with knowledge about the deployed cloud resources.
 *     module.kompass_compute.helm_values_yaml,
