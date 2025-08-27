@@ -18,7 +18,7 @@ It creates IAM roles, policies, SQS queues, and related resources for the Kompas
 
 ## Prerequisites
 
-- Kubernetes 1.19+
+- Kubernetes 1.28+
 - Helm 3.2.0+
 - [Kompass](https://github.com/zesty-co/kompass) installed in the cluster
 - EKS Pod Identity enabled in the cluster, otherwise go to the [IRSA section](#using-iam-roles-for-service-accounts-irsa)
