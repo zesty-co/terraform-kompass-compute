@@ -9,9 +9,9 @@ It creates IAM roles, policies, SQS queues, and related resources for the Kompas
 
 - [Prerequisites](#prerequisites)
 - [Quick Start](#quick-start)
+- [Installation instructions](#installation-instructions)
 - [Deployed Resources](#deployed-resources)
 - [Provider Configuration](#provider-configuration)
-- [Installation instructions](#installation-instructions)
 - [Deploying the helm chart directly](#deploying-the-helm-chart-directly)
 - [Advanced Usage](#advanced-usage)
 - [API Reference](#requirements)

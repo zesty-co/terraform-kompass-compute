@@ -3,3 +3,10 @@ variable "cluster_name" {
   type        = string
   nullable    = false
 }
+
+variable "helm_values_yaml" {
+  description = "YAML configuration for Helm values"
+  type        = string
+  default     = ""
+  nullable    = false
+}
