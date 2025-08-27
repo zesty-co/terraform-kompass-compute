@@ -1,33 +1,3 @@
-/**
- * # Quick Start
- *
- * This example shows how to install Kompass Compute with the most basic setup.
- * It deploys 4 components:
- * 1. A set of default pull-through cache rules.
- * They are used to reduce network costs, by only pulling images from the internet once, and after that pulling them from inside the VPC.
- * To create pull-through cache for dockerhub and ghcr, or configure credentials for a private registry, see the [ECR module](../../modules/ecr/README.md).
- * 2. The Kompass Compute module, which creates the cloud resources for Kompass Compute.
- * 3. The Kompass Compute Helm chart.
- * 4. The CRDs of the Kompass Compute Helm chart, through a separate chart, according to the helm best practices.
- *
- * > Note: it's better to create the pull-through cache rules once per region instead of per cluster.
- *
- * Before applying the module, ensure that the providers target the correct EKS cluster, and AWS account.
- *
- * You need to ensure the following:
- * 1. The AWS provider is configured to target the correct AWS account.
- * By default the module will use the accounted configured in your local aws cli.
- * It can be overriden by modifying the `aws` provider configuration inside [providers.tf](./providers.tf).
- * 2. The name of the EKS cluster is provided in the `cluster_name` variable through a tfvars or env var.
- * See [variables.tf](./variables.tf) for more details.
- * 3. You have the helm binary installed and available in your PATH and the helm provider is configured correctly.
- *
- * The module works in the following order:
- * 1. Scrapes the EKS cluster for information.
- * 2. Creates the cloud resources for Kompass Compute as well as the pull-through cache rules.
- * 3. Deploys the CRDs of the Kompass Compute Helm chart, through a separate chart, according to the helm best practices.
- * 4. Deploys the Kompass Compute Helm chart, providing it with knowledge about the deployed cloud resources.
- */
 locals {
   vpc_id     = data.aws_eks_cluster.this.vpc_config[0].vpc_id
   vpc_cidr   = data.aws_vpc.this.cidr_block

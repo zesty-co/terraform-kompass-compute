@@ -1,4 +1,3 @@
-<!-- BEGIN_TF_DOCS -->
 # Zesty Kompass Compute AWS ECR Pull-Through Cache Module
 
 This Terraform module creates and manages AWS ECR Pull-Through Cache Rules and their associated secrets in AWS Secrets Manager.
@@ -137,6 +136,7 @@ Name of the ECR repository will be in the format `zesty-{registry_name}` where `
 It can be overridden by setting the `ecr_pull_through_rule_name_prefix` variable in the module configuration,
 or by using the `ecr_repository_prefix_override` field in the `registries` map for each registry.
 
+<!-- BEGIN_TF_DOCS -->
 ## Requirements
 
 | Name | Version |
