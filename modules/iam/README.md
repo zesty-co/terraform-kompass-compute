@@ -1,4 +1,3 @@
-<!-- BEGIN_TF_DOCS -->
 # Zesty Kompass Compute AWS IAM Role Module
 
 This Terraform module creates and manages IAM roles and policies for the Zesty Kompass Compute controller.
@@ -42,6 +41,7 @@ module "iam_controller" {
 }
 ```
 
+<!-- BEGIN_TF_DOCS -->
 ## Requirements
 
 | Name | Version |

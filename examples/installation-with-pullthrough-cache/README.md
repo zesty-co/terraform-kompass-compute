@@ -1,4 +1,3 @@
-<!-- BEGIN_TF_DOCS -->
 # Quick Start
 
 This example shows how to install Kompass Compute with the most basic setup.
@@ -28,6 +27,7 @@ The module works in the following order:
 3. Deploys the CRDs of the Kompass Compute Helm chart, through a separate chart, according to the helm best practices.
 4. Deploys the Kompass Compute Helm chart, providing it with knowledge about the deployed cloud resources.
 
+<!-- BEGIN_TF_DOCS -->
 ## Requirements
 
 | Name | Version |

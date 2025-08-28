@@ -1,4 +1,3 @@
-<!-- BEGIN_TF_DOCS -->
 # Zesty Kompass Compute Module
 
 This module allows installing Kompass Compute in an EKS cluster.
@@ -370,6 +369,7 @@ module "kompass_compute" {
 }
 ```
 
+<!-- BEGIN_TF_DOCS -->
 ## Requirements
 
 | Name | Version |
