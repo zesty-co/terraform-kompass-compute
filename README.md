@@ -228,7 +228,7 @@ To reduce network costs, it's recommended to configure an ECR pull through cache
 
 **To configure ECR pull through cache:**
 
--   Create ECR pull through rules using the `ecr` module:
+1.   Create ECR pull through rules using the `ecr` module:
 
 ```hcl
 module "ecr" {
@@ -261,7 +261,7 @@ module "ecr" {
 
 >   Note: It is recommended to deploy `ecr` module only once per region. ECR pull through cache rules are regional resources, and creating them multiple times is not necessary and may lead to conflicts.
 
--   Connect the Helm chart to the provided ECR repository by providing the values.yaml to the Helm chart:
+2.   Connect the Helm chart to the provided ECR repository by providing the values.yaml to the Helm chart:
 
 ```hcl
 resource "helm_release" "kompass_compute" {
