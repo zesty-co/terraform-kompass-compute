@@ -8,38 +8,38 @@ The Terraform installation also passes information to Helm and deploys resources
 
 ## Contents
 
--   [Prerequisites](#prerequisites)
--   [Installation options](#installation-options)
-    -   [Quick start installation](#quick-start-installation)
-    -   [Detailed installation](#detailed-installation)
-        -   [Provider configuration](#provider-configuration)
-        -   [Invocation](#invocation)
-    -   [Deploy the Helm chart directly](#deploy-the-helm-chart-directly)
--   [Deployed AWS resources](#deployed-aws-resources)
--   [Advanced configuration](#advanced-configuration)
-    -   [ECR pull through cache](#ecr-pull-through-cache)
-    -   [Pass values to the Helm chart](#pass-values-to-the-helm-chart)
-    -   [Use IAM Roles for Service Accounts (IRSA)](#use-iam-roles-for-service-accounts-irsa)
-    -   [Disable S3 VPC interface endpoint creation](#disable-s3-vpc-interface-endpoint-creation)
--   [API reference](#requirements)
+- [Prerequisites](#prerequisites)
+- [Installation options](#installation-options)
+  - [Quick start installation](#quick-start-installation)
+  - [Detailed installation](#detailed-installation)
+    - [Provider configuration](#provider-configuration)
+    - [Invocation](#invocation)
+  - [Deploy the Helm chart directly](#deploy-the-helm-chart-directly)
+- [Deployed AWS resources](#deployed-aws-resources)
+- [Advanced configuration](#advanced-configuration)
+  - [ECR pull through cache](#ecr-pull-through-cache)
+  - [Pass values to the Helm chart](#pass-values-to-the-helm-chart)
+  - [Use IAM Roles for Service Accounts (IRSA)](#use-iam-roles-for-service-accounts-irsa)
+  - [Disable S3 VPC interface endpoint creation](#disable-s3-vpc-interface-endpoint-creation)
+- [API reference](#requirements)
 
 ## Prerequisites
 
--   Kubernetes v1.19, or later
--   Helm v3.2.0, or later
--   [Kompass](https://github.com/zesty-co/kompass) installed in the cluster
--   Pod Identity enabled in the cluster (alternatively, see [Use IAM Roles for Service Accounts (IRSA)](#use-iam-roles-for-service-accounts-irsa))
+- Kubernetes v1.28, or later
+- Helm v3.2.0, or later
+- [Kompass](https://github.com/zesty-co/kompass) installed in the cluster
+- Pod Identity enabled in the cluster (alternatively, see [Use IAM Roles for Service Accounts (IRSA)](#use-iam-roles-for-service-accounts-irsa))
 
 ## Installation options
 
 You can install Kompass Compute in these ways:
 
--   Use Terraform to deploy both cloud and cluster resources with either of these methods:
-    -  [Quick start installation](#quick-start-installation): Copy the quick start code to your terminal, change as needed, then apply.
-    -  [Detailed installation](#detailed-installation): Copy the quick start code to your terminal, follow the installation details to apply the code to your environment, then apply.
--   Use Terraform to deploy only the cloud resources, and use Helm to deploy the cluster resources:
-    1.  Deploy the cloud resources (only) using either of the options above.
-    2.  Deploy the cluster resources using Helm.
+- Use Terraform to deploy both cloud and cluster resources with either of these methods:
+  - [Quick start installation](#quick-start-installation): Copy the quick start code to your filesystem, change as needed, then apply.
+  - [Detailed installation](#detailed-installation): Copy the quick start code to your filesystem, follow the installation details to apply the code to your environment, then apply.
+- Use Terraform to deploy only the cloud resources, and use Helm to deploy the cluster resources:
+  1. Deploy the cloud resources (only) using either of the options above.
+  2. Deploy the cluster resources using Helm.
 
         Before you begin, see the instructions in [Deploy the Helm chart directly](#deploy-the-helm-chart-directly).
 
@@ -49,16 +49,16 @@ You can find everything needed to install in the [quick-start folder](https://gi
 
 Ensure that you configure the providers and the variables, as described.
 
-Copy the quick-start code to your terminal. Customize it as needed for your environment, then apply it.
+Copy the quick-start code to your filesystem. Customize it as needed for your environment, then apply it.
 
 ### Detailed installation
 
 For the most basic installation, create a Terraform configuration with the following components:
 
-1.  A provider configuration section that describes:
-    -  **AWS provider**: gets cluster information
-    -  **Helm provider**: deploys the Kompass Compute Helm chart
-2.  Invocation of the **kompass-compute** module that installs all required AWS resources and the helm_release resource to deploy the Kompass Compute Helm chart.
+1. A provider configuration section that describes:
+    - **AWS provider**: gets cluster information
+    - **Helm provider**: deploys the Kompass Compute Helm chart
+2. Invocation of the **kompass-compute** module that installs all required AWS resources and the helm_release resource to deploy the Kompass Compute Helm chart.
 
 The output of the kompass-compute module includes a values.yaml file that gives the kompass-compute helm chart knowledge about the location of the deployed cloud resources.  
 The following configurations do all the required data transfer.
@@ -67,7 +67,7 @@ The following configurations do all the required data transfer.
 
 The following sample code configures the necessary providers. If your setup is different, you will need to adjust the configuration accordingly.
 
-##### Helm provider 3
+##### Helm provider version 3
 
 ```hcl
 provider "aws" {}
@@ -91,7 +91,7 @@ provider "helm" {
 }
 ```
 
-##### Helm provider 2
+##### Helm provider version 2
 
 ```hcl
 provider "aws" {}
@@ -191,33 +191,33 @@ The Helm chart requires information about cloud resources deployed by the kompas
 
 **To deploy the Helm chart directly:**
 
-1.  Use Terraform to deploy the cloud resources with either the [Quick start installation](#quick-start-installation) or [Detailed installation](#detailed-installation) methods.  
+1. Use Terraform to deploy the cloud resources with either the [Quick start installation](#quick-start-installation) or [Detailed installation](#detailed-installation) methods.  
     Skip the Helm installation by commenting or removing the sections that begin with resource "helm_release".
-    1.  Retrieve values.yaml from the Terraform module directory by running `terraform output -raw helm_values_yaml > values.yaml`
-    2.  Install the Helm charts as described in [Kompass Compute Helm Charts](https://github.com/zesty-co/kompass-compute) and provide the retrieved values.yaml.
+    1. Retrieve values.yaml from the Terraform module directory by running `terraform output -raw helm_values_yaml > values.yaml`
+    2. Install the Helm charts as described in [Kompass Compute Helm Charts](https://github.com/zesty-co/kompass-compute) and provide the retrieved values.yaml.
 
 ## Deployed AWS resources
 
--   IAM roles for various components of the Kompass Compute controller:
-    -  Hiberscaler
-    -  Image Size Calculator
-    -  Snapshooter
-    -  Telemetry Manager
--   SQS queue for spot instance termination notifications
--   CloudWatch event rules for spot instance interruptions
--   S3 VPC endpoint for secure access to S3
--   Security groups for VPC endpoints
--   EKS Pod Identity or IRSA (IAM Roles for Service Accounts) resources configs
+- IAM roles for various components of the Kompass Compute controller:
+  - Hiberscaler
+  - Image Size Calculator
+  - Snapshooter
+  - Telemetry Manager
+- SQS queue for spot instance termination notifications
+- CloudWatch event rules for spot instance interruptions
+- S3 VPC endpoint for secure access to S3
+- Security groups for VPC endpoints
+- EKS Pod Identity or IRSA (IAM Roles for Service Accounts) resources configs
 
 ## Advanced configuration
 
 This section describes the following advanced configuration options:
 
--   [ECR pull through cache](#ecr-pull-through-cache)
--   [Pass values to the Helm chart](#pass-values-to-the-helm-chart)
--   [Use IAM Roles for Service Accounts (IRSA)](#use-iam-roles-for-service-accounts-irsa)
--   [Disable S3 VPC interface endpoint creation](#disable-s3-vpc-interface-endpoint-creation)
--   [API reference](#requirements)
+- [ECR pull through cache](#ecr-pull-through-cache)
+- [Pass values to the Helm chart](#pass-values-to-the-helm-chart)
+- [Use IAM Roles for Service Accounts (IRSA)](#use-iam-roles-for-service-accounts-irsa)
+- [Disable S3 VPC interface endpoint creation](#disable-s3-vpc-interface-endpoint-creation)
+- [API reference](#requirements)
 
 ### ECR pull through cache
 
@@ -227,7 +227,7 @@ To reduce network costs, it's recommended to configure an ECR pull through cache
 
 **To configure ECR pull through cache:**
 
--   Create ECR pull through rules using the `ecr` module:
+- Create ECR pull through rules using the `ecr` module:
 
 ```hcl
 module "ecr" {
@@ -258,9 +258,9 @@ module "ecr" {
 }
 ```
 
->   Note: It is recommended to deploy `ecr` module only once per region. ECR pull through cache rules are regional resources, and creating them multiple times is not necessary and may lead to conflicts.
+> Note: It is recommended to deploy `ecr` module only once per region. ECR pull through cache rules are regional resources, and creating them multiple times is not necessary and may lead to conflicts.
 
--   Connect the Helm chart to the provided ECR repository by providing the values.yaml to the Helm chart:
+- Connect the Helm chart to the provided ECR repository by providing the values.yaml to the Helm chart:
 
 ```hcl
 resource "helm_release" "kompass_compute" {
