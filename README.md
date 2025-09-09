@@ -138,7 +138,7 @@ data "aws_vpc" "this" {
 # Creates the cloud resources for Kompass Compute.
 module "kompass_compute" {
   source  = "zesty-co/compute/kompass"
-  version = "~> 1.0.0"
+  version = "~> 1.1.0"
 
   cluster_name = local.cluster_name
   vpc_id       = local.vpc_id
@@ -232,7 +232,7 @@ To reduce network costs, it's recommended to configure an ECR pull through cache
 ```hcl
 module "ecr" {
   source  = "zesty-co/compute/kompass//modules/ecr"
-  version = "~> 1.0.0"
+  version = "~> 1.1.0"
 
   ecr_pull_through_rule_name_prefix = "<Cluster Name>-"
 
@@ -333,7 +333,7 @@ Optionally, you can disable Pod Identity by setting `enable_pod_identity` to `fa
 ```hcl
 module "kompass_compute" {
   source  = "zesty-co/compute/kompass"
-  version = "~> 1.0.0"
+  version = "~> 1.1.0"
 
   cluster_name = "cluster-name"
 
@@ -352,7 +352,7 @@ If you have an S3 VPC gateway endpoint or any other reason to disable the creati
 ```hcl
 module "kompass_compute" {
   source  = "zesty-co/compute/kompass"
-  version = "~> 1.0.0"
+  version = "~> 1.1.0"
 
   cluster_name           = "cluster-name"
   create_s3_vpc_endpoint = false

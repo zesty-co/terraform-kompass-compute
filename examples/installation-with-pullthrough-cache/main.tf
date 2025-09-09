@@ -15,7 +15,7 @@ data "aws_vpc" "this" {
 # Creates the cloud resources for Kompass Compute.
 module "kompass_compute" {
   source  = "zesty-co/compute/kompass"
-  version = "~> 1.0.0"
+  version = "~> 1.1.0"
   # source = "../../"
 
   cluster_name = var.cluster_name
@@ -32,7 +32,7 @@ module "kompass_compute" {
 
 module "ecr" {
   source  = "zesty-co/compute/kompass//modules/ecr"
-  version = "~> 1.0.0"
+  version = "~> 1.1.0"
   # source = "../../modules/ecr"
 
   ecr_pull_through_rule_name_prefix = "${var.cluster_name}-"
