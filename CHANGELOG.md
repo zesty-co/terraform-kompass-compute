@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.2.0](https://github.com/zesty-co/terraform-kompass-compute/compare/v1.1.0...v1.2.0) (2025-09-15)
+
+
+### Features
+
+* Add CODEOWNERS ([#20](https://github.com/zesty-co/terraform-kompass-compute/issues/20)) ([78d2aea](https://github.com/zesty-co/terraform-kompass-compute/commit/78d2aea312a991db623dd3d92b90a03ba65d93c3))
+
 ## [1.1.0](https://github.com/zesty-co/terraform-kompass-compute/compare/v1.0.3...v1.1.0) (2025-08-27)
 
 
