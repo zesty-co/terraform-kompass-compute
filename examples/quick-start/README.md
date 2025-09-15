@@ -43,7 +43,7 @@ The module works in the following order:
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_kompass_compute"></a> [kompass\_compute](#module\_kompass\_compute) | zesty-co/compute/kompass | ~> 1.0.0 |
+| <a name="module_kompass_compute"></a> [kompass\_compute](#module\_kompass\_compute) | zesty-co/compute/kompass | >= 1.0.0, < 2.0.0 |
 
 ## Resources
 

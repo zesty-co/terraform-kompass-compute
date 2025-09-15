@@ -19,7 +19,7 @@ Note: This module should not be used directly, but rather as a sub-module of the
 ```hcl
 module "iam_controller" {
   source  = "zesty-co/compute/kompass//modules/iam"
-  version = "~> 1.0.0"
+  version = ">= 1.0.0, < 2.0.0"
 
   create = true
 
