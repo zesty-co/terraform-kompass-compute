@@ -131,6 +131,10 @@ data "aws_eks_cluster" "this" {
   name = local.cluster_name
 }
 
+data "aws_iam_openid_connect_provider" "this" {
+  url = data.aws_eks_cluster.this.identity[0].oidc[0].issuer
+}
+
 data "aws_vpc" "this" {
   id = data.aws_eks_cluster.this.vpc_config[0].vpc_id
 }
@@ -143,6 +147,8 @@ module "kompass_compute" {
   cluster_name = local.cluster_name
   vpc_id       = local.vpc_id
   subnet_ids   = local.subnet_ids
+
+  irsa_oidc_provider_arn = data.aws_iam_openid_connect_provider.this.arn
 
   vpc_endpoint_security_group_rules = {
     ingress_https = {
@@ -327,10 +333,15 @@ qubexConfig:
 By default, the module creates Pod Identity roles for the Kompass Compute controller components.
 
 To use IRSA (IAM Roles for Service Accounts) instead, set the `enable_irsa` variable to `true` and provide the OIDC provider ARN using the `irsa_oidc_provider_arn` variable.
+The OIDC provider ARN can be retrieved using the `aws_iam_openid_connect_provider` data source.
 
 Optionally, you can disable Pod Identity by setting `enable_pod_identity` to `false`.
 
 ```hcl
+data "aws_iam_openid_connect_provider" "this" {
+  url = data.aws_eks_cluster.this.identity[0].oidc[0].issuer
+}
+
 module "kompass_compute" {
   source  = "zesty-co/compute/kompass"
   version = ">= 1.0.0, < 2.0.0"
@@ -339,7 +350,7 @@ module "kompass_compute" {
 
   enable_pod_identity    = false
   enable_irsa            = true
-  irsa_oidc_provider_arn = "arn:aws:iam::123456789012:oidc-provider/oidc.eks.us-west-2.amazonaws.com/id/EXAMPLE1234567890"
+  irsa_oidc_provider_arn = data.aws_iam_openid_connect_provider.this.arn
 }
 ```
 

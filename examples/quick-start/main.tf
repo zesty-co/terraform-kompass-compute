@@ -8,6 +8,10 @@ data "aws_eks_cluster" "this" {
   name = var.cluster_name
 }
 
+data "aws_iam_openid_connect_provider" "this" {
+  url = data.aws_eks_cluster.this.identity[0].oidc[0].issuer
+}
+
 data "aws_vpc" "this" {
   id = data.aws_eks_cluster.this.vpc_config[0].vpc_id
 }
@@ -21,6 +25,8 @@ module "kompass_compute" {
   cluster_name = var.cluster_name
   vpc_id       = local.vpc_id
   subnet_ids   = local.subnet_ids
+
+  irsa_oidc_provider_arn = data.aws_iam_openid_connect_provider.this.arn
 
   vpc_endpoint_security_group_rules = {
     ingress_https = {
