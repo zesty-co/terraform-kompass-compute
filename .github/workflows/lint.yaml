@@ -10,7 +10,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 0
 
@@ -18,7 +18,7 @@ jobs:
         uses: hashicorp/setup-terraform@v3
 
       - name: Setup TFLint
-        uses: terraform-linters/setup-tflint@v4
+        uses: terraform-linters/setup-tflint@v5
 
       - name: Install terraform-docs
         run: |
@@ -44,4 +44,28 @@ jobs:
         run: |
           git diff --exit-code || (echo "There are changes in the repository. Please commit them." && exit 1)
           echo "No changes detected."
-        
+
+  terraform-matrix:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        terraform-version:
+          - "1.9.0"
+          - "1.10.0"
+          - "1.11.0"
+          - "1.12.0"
+          - "1.13.0"
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Set up Terraform ${{ matrix.terraform-version }}
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ matrix.terraform-version }}
+
+      - name: Run make init
+        run: make init

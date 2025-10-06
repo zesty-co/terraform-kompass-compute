@@ -18,7 +18,7 @@ jobs:
     if: github.repository_owner == 'zesty-co'
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Release
         uses: cycjimmy/semantic-release-action@v4
