@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.4.0](https://github.com/zesty-co/terraform-kompass-compute/compare/v1.3.0...v1.4.0) (2025-10-06)
+
+
+### Features
+
+* Add OIDC URL autodiscovery using `aws_iam_openid_connect_provider` ([#25](https://github.com/zesty-co/terraform-kompass-compute/issues/25)) ([863b378](https://github.com/zesty-co/terraform-kompass-compute/commit/863b3781447e292f2892079b65b1c63dd0d46d32))
+
 ## [1.3.0](https://github.com/zesty-co/terraform-kompass-compute/compare/v1.2.0...v1.3.0) (2025-10-06)
 
 
