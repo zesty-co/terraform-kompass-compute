@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.3.0](https://github.com/zesty-co/terraform-kompass-compute/compare/v1.2.0...v1.3.0) (2025-10-06)
+
+
+### Features
+
+* Add required minimal version of Terraform ([#24](https://github.com/zesty-co/terraform-kompass-compute/issues/24)) ([4f56ae3](https://github.com/zesty-co/terraform-kompass-compute/commit/4f56ae32ec985b360944296b4a1c7e0078364825))
+
 ## [1.2.0](https://github.com/zesty-co/terraform-kompass-compute/compare/v1.1.0...v1.2.0) (2025-09-15)
 
 
