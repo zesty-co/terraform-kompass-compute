@@ -9,7 +9,7 @@ init:
 	@for module in $(MODULES); do \
 		if [ -d "$$module" ]; then \
 			echo "Initializing $$module"; \
-			cd $$module && TF_VAR_kompass_compute_source="../../" terraform init -backend=false -upgrade && cd - > /dev/null; \
+			cd $$module && terraform init -backend=false && cd - > /dev/null; \
 		fi; \
 	done
 
