@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.5.0](https://github.com/zesty-co/terraform-kompass-compute/compare/v1.4.0...v1.5.0) (2025-10-10)
+
+
+### Features
+
+* Upgrade AWS provider to version 6 ([#26](https://github.com/zesty-co/terraform-kompass-compute/issues/26)) ([5367cae](https://github.com/zesty-co/terraform-kompass-compute/commit/5367caed34500632658c3f997a2a5a9884bafa23))
+
 ## [1.4.0](https://github.com/zesty-co/terraform-kompass-compute/compare/v1.3.0...v1.4.0) (2025-10-06)
 
 
