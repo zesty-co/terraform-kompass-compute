@@ -74,7 +74,8 @@ variable "registries" {
   # - quay -> quay.io
   # - dockerhub -> registry-1.docker.io
   # - ghcr -> ghcr.io
-  default = {}
+  default  = {}
+  nullable = false
 
   # Mark the entire variable as sensitive to protect secret_content
   sensitive = true

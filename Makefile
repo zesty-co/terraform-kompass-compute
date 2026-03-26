@@ -50,6 +50,7 @@ lint: init
 
 .PHONY: check-broken-links
 check-broken-links:
+	# npm install -g markdown-link-check
 	@echo "Checking for broken links in README files..."
 	@for module in $(MODULES); do \
 		if [ -d "$$module" ]; then \
