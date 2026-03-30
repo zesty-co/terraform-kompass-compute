@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.5.1](https://github.com/zesty-co/terraform-kompass-compute/compare/v1.5.0...v1.5.1) (2026-03-30)
+
+
+### Bug Fixes
+
+* Add missing nullability to ecr module ([#27](https://github.com/zesty-co/terraform-kompass-compute/issues/27)) ([3560716](https://github.com/zesty-co/terraform-kompass-compute/commit/3560716efb86cd1cc532a71ad743f5ad6c1d041d))
+
 ## [1.5.0](https://github.com/zesty-co/terraform-kompass-compute/compare/v1.4.0...v1.5.0) (2025-10-10)
 
 
